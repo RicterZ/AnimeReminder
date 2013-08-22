@@ -11,7 +11,7 @@ class new_anime(object):
     _searchUrl  = 'http://mediaso.xmp.kankan.xunlei.com/search.php?keyword='
     _listUrl    = 'http://pianku.xmp.kankan.com/movielua/'
     _listExName = '.lua.zip'
-    _ml         = '/home/ricter/web/anime/animelua/'
+    _ml         = 'lua\\'
 
     def getURL(self, url):
         """
@@ -121,16 +121,18 @@ class new_anime(object):
                         listdata = self.getURL(self._listUrl + id[:2] + '/' + id + self._listExName)
                         code.write(listdata)
 
-            zfile = zipfile.ZipFile(id + ".zip",'r')
-            filename = id + '.lua'
-            data = zfile.read(filename)
-            file = open(filename, 'w+b');file.write(data)
-            file.close();zfile.close()
-            os.remove(id + '.zip')                #删除下载的zip文件
+                zfile = zipfile.ZipFile(id + ".zip",'r')
+                filename = id + '.lua'
+                data = zfile.read(filename)
+                file = open(filename, 'w+b');file.write(data)
+                file.close();zfile.close()
+                os.remove(id + '.zip')                #删除下载的zip文件
         except:
             return -1
 
 #DEMO
 #----------------------------------------------------------
 xunlei = new_anime()
-print xunlei.animeSearch('丧女')
+for anime in xunlei.animeSearch('丧女'):
+    print anime[0].decode('utf8'), 
+    print xunlei.getNewEpisode(anime[1], True)
