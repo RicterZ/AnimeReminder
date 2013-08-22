@@ -11,7 +11,7 @@ class new_anime(object):
     _searchUrl  = 'http://mediaso.xmp.kankan.xunlei.com/search.php?keyword='
     _listUrl    = 'http://pianku.xmp.kankan.com/movielua/'
     _listExName = '.lua.zip'
-    _ml         = 'lua\\'
+    _ml         = 'lua\\' #Windows 'lua\\' Linux '/home/xxx/lua'
 
     def getURL(self, url):
         """
