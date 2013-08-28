@@ -11,7 +11,6 @@ class new_anime(object):
     _searchUrl  = 'http://mediaso.xmp.kankan.xunlei.com/search.php?keyword='
     _listUrl    = 'http://pianku.xmp.kankan.com/movielua/'
     _listExName = '.lua.zip'
-    _ml         = 'lua\\' #Windows 'lua\\' Linux '/home/xxx/lua'
 
     def getURL(self, url):
         """
@@ -50,8 +49,8 @@ class new_anime(object):
             若返回数字等于-1，则证明搜索过程出错或者下载过程出错
         """
         epilist = []
-        os.chdir(self._ml)
         if reupdate:
+            print 'update'
             if self.__getAnimeList__(id, True) == -1:
                 return -1
         else:
@@ -59,7 +58,6 @@ class new_anime(object):
                 return -1
         openfile = open(id + '.lua', 'r')
         sname = re.compile(r'sname=".+?"')
-        os.chdir('..')
         for line in openfile.read().split('\n'):
             if sname.findall(line):
                 try: 
@@ -72,6 +70,7 @@ class new_anime(object):
             for i in epilist:
                 if i > temp:
                     temp = i
+            print temp
             return temp
         return 0
 
@@ -79,11 +78,9 @@ class new_anime(object):
         """
             根据ID获取动漫名称
         """
-        os.chdir(self._ml)
         if self.__getAnimeList__(id) == -1:
             return ''
         openfile = open(id + '.lua', 'r')
-        os.chdir('..')
         smoviename = re.compile(r'smoviename=".+?"')
         for line in openfile.read().split('\n'):
             if smoviename.findall(line):
@@ -104,10 +101,6 @@ class new_anime(object):
             动漫列表在一个zip压缩包里面，需要下载下来，解压，获取..
             难道迅雷看看就是这样运作的么..
         """
-        #try:
-        #    os.remove(id + '.zip')
-        #except:
-        #    print 'None'
 
         try:
             if reupdate:
@@ -121,18 +114,11 @@ class new_anime(object):
                         listdata = self.getURL(self._listUrl + id[:2] + '/' + id + self._listExName)
                         code.write(listdata)
 
-                zfile = zipfile.ZipFile(id + ".zip",'r')
-                filename = id + '.lua'
-                data = zfile.read(filename)
-                file = open(filename, 'w+b');file.write(data)
-                file.close();zfile.close()
-                os.remove(id + '.zip')                #删除下载的zip文件
+            zfile = zipfile.ZipFile(id + ".zip",'r')
+            filename = id + '.lua'
+            data = zfile.read(filename)
+            file = open(filename, 'w+b');file.write(data)
+            file.close();zfile.close()
+            os.remove(id + '.zip')                #删除下载的zip文件
         except:
             return -1
-
-#DEMO
-#----------------------------------------------------------
-xunlei = new_anime()
-for anime in xunlei.animeSearch('丧女'):
-    print anime[0].decode('utf8'), 
-    print xunlei.getNewEpisode(anime[1], True)
