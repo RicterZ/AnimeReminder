@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from lib.anime import new_anime
+from lib.anime import AnimeDataGetter
 import web, os
 import sys
 default_encoding = 'utf-8'
@@ -10,10 +10,9 @@ if sys.getdefaultencoding() != default_encoding:
 
 os.chdir('animelua')
 urls=(
-    '/allupdate', 'allupdate',
+    '/allupdate', 'allupdate'
 )
 
-global db
 db = web.database(dbn='mysql', db='', user='', pw='')
 
 class allupdate:
@@ -21,11 +20,11 @@ class allupdate:
         """
             全部更新
         """
-        openheader = open("lib/emailtemp/header", "r").read()
-        openfooter = open("lib/emailtemp/footer", "r").read()
-        sendbody = ''
+        templatepath = '/home/ricter/web/anime/lib/emailtemp/'
+        openheader = open(templatepath + "header", "r").read()
+        openfooter = open(templatepath + "footer", "r").read()
 
-        update = new_anime()
+        update = AnimeDataGetter()
         data = db.query('select * from anmielist where isover=0 order by id')
 
         isnew = db.query('select * from anmielist where isnew > 0')
@@ -36,17 +35,18 @@ class allupdate:
         newanimelist = []
         for anime in data:
             print '** ' + anime.animename
-            episode = update.getNewEpisode(anime.animeid, True)
-            if not isinstance(episode, int):
-                if not str(episode[0]) == str(anime.episode):
+            isSuccess = update.getDetail(anime.animeid)
+            if isSuccess:
+                if not str(update.AnimeEpiCount) == str(anime.episode):
                     db.delete('anmielist', where="id=" + str(anime.id))
                     db.insert('anmielist', animeid = anime.animeid, animename = anime.animename, \
-                              episode = episode[0], isnew = 12, isover = episode[1])
+                              episode = update.AnimeEpiCount, isnew = 12, isover = update.AnimeIsOver)
                     newanimelist.append(anime.animeid)
 
         if newanimelist:
             updateusers = db.query('select * from user where 1')
             for user in updateusers:
+                sendbody = ''
                 if not user.animelist == '':
                     useranimelist = user.animelist.split('|')[:-1]
                     readlist = list(str(user.isread))
@@ -58,7 +58,8 @@ class allupdate:
                             sendbody = sendbody + \
                             '<table class="w580" width="580" cellpadding="0" cellspacing="0" border="0"><tbody><tr><td class="w580" width="580">' + \
                             '<p align="left" class="article-title"><a href="http://data.movie.kankan.com/movie/' + \
-                            str(anime) + '">' + t.animename + '</a><span class="cs-el-wrap">更新到第 ' + str(t.episode) + ' 集</span></p><br />'
+                            str(anime) + '">' + t.animename + '</a><span class="cs-el-wrap">更新到第 ' + str(t.episode) \
+                            + ' 集</span></p><br /></tbody></table>'
 
                             readlist[useranimelist.index(anime)] = '1'
 
@@ -77,5 +78,5 @@ class allupdate:
                             )
 
         return 0
-		
+
 application = web.application(urls, globals()).wsgifunc()
