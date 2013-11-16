@@ -5,28 +5,24 @@
 #Website:http://www.ricter.info
 #-----------------------------------------------
 
-from lib.anime import new_anime
+from lib.anime import AnimeDataGetter
 import urllib ,urllib2
 import re, os, datetime
 import zipfile, random, hashlib
 import web
 import jinja2 as jj
 
-########################设置#########################
-dbhost  = '127.0.0.1'             ##数据库地址     ##
-dbtype  = 'mysql'                 ##数据库类型     ##
-dbname  = '                       ##数据库名       ##
-dbun    = ''                      ##数据库用户名   ##
-dbpw    = ''                      ##数据库密码     ##
-luadir = 'animelua'               ##Lua下载目录设置##
-tempdir = '../templates'          ##模板目录设置   ##
-########################设置#########################
+dbhost  = '127.0.0.1'             #数据库地址
+dbtype  = 'mysql'                 #数据库类型
+dbname  = ''                      #数据库名
+dbun    = ''                      #数据库用户名
+dbpw    = ''                      #数据库密码
+tempdir = '../templates'          #模板目录设置
 
 global db
 db = web.database(host=dbhost, dbn=dbtype, db=dbname, user=dbun, pw=dbpw)        #连接数据库
-os.chdir(luadir)                                                                 #cd到下载lua文件的目录
 env = jj.Environment(loader = jj.FileSystemLoader(tempdir))                      #模板渲染
-web.config.debug = False                                                        #关闭调试模式
+web.config.debug = False                                                         #关闭调试模式
 
 urls=(
     '/', 'IndexHandler',
@@ -297,7 +293,7 @@ class SearchHandler(BaseHandler):
     处理动漫查找页面的请求
     """
     def GET(self):
-        xunlei = new_anime()
+        anime = AnimeDataGetter()
         try:
             animename = None                                                           #定义animename为None，防止无参数提交
             animename = web.input().n                                                  #获取用户输入
@@ -306,8 +302,8 @@ class SearchHandler(BaseHandler):
 
         if animename:
             return self.render('search.html', "搜索结果".decode('utf8'), searchResultList = \
-            xunlei.animeSearch(animename.encode('gbk')), \
-            isLogin = self.isLogin, newnum = self.updateNum)                           #xunlei.animeSearch(animename.encode('gbk'))即是结果
+            anime.animeSearch(animename.encode('gbk')), \
+            isLogin = self.isLogin, newnum = self.updateNum) 
 
 class AjaxSearchHandler(BaseHandler):
     def GET(self):
@@ -315,8 +311,8 @@ class AjaxSearchHandler(BaseHandler):
             animename = web.input().n
         except:
             animename = ''
-        xunlei = new_anime()
-        return self.render('ajaxsearch.html', searchlist = xunlei.animeSearch(animename.encode('utf8')))
+        anime = AnimeDataGetter()
+        return self.render('ajaxsearch.html', searchlist = anime.animeSearch(animename.encode('utf8')))
 
 class AjaxScheduleHandler(BaseHandler):
     """
@@ -324,9 +320,9 @@ class AjaxScheduleHandler(BaseHandler):
     实现方法是爬迅雷看看动漫官网的HTML代码，正则表达式解析获取更新时间表
     """
     def GET(self):
-        xunlei = new_anime()                                                                               #调用传说中的AnimeClass了喵哈哈哈哈
+        anime_p = AnimeDataGetter()                                                                               #调用传说中的AnimeClass了喵哈哈哈哈
         url = 'http://anime.kankan.com/'                                                                   #定义地址
-        reqdata = xunlei.getURL(url)                                                                       #访问url，返回html代码
+        reqdata = anime_p.getURL(url)                                                                       #访问url，返回html代码
 
         animeList, todaylist, tomorrowlist = [], [], []
         try:
@@ -412,20 +408,15 @@ class AjaxAddAnimeHandler(BaseHandler):
         if len(data) == 0:addData = True
 
         if addData:                                                            #动漫添加实现部分
-            xunlei = new_anime()
-            epinum = xunlei.getNewEpisode(animeid)                             #epinum为返回值，若为int则证明不是动漫或者动漫不存在，若为list则获取成功
-            #print epinum                                                      #调试时使用，这里注释掉
-            if isinstance(epinum, int):                                        #isinstance判断是否为int
-                return 'ERROR_INVALID_ANIME'
+            anime = AnimeDataGetter()
+            isSuccess = anime.getDetail(animeid)
+            if isSuccess:
+                db.insert('anmielist', animename = anime.AnimeTitle, \
+                    animeid = anime.AnimeAid, episode = anime.AnimeEpiCount,\
+                    isover = anime.AnimeIsOver, poster = anime.AnimePoster, \
+                    detail = anime.AnimeIntro)
             else:
-                #1 is over ; 0 is not over
-                epi, isoverbool = epinum[0], epinum[1]                         #epinum返回值为[动漫集数, 是否完结]
-                #print animeid, epi, isoverbool                                调试时使用，这里注释掉
-                if int(epi) > 0:                                               #大于1即是判断是否为电影（1）
-                    data = db.insert('anmielist', animename=(xunlei.\
-                    getNameByID(animeid).strip('"')),animeid=animeid,episode=epi, isover=isoverbool) #加入数据库
-                else:
-                    return 'ERROR_INVALID_ANIME'
+                return 'ERROR_INVALID_ANIME'
 
         try:
             if not animeid in self.animeList:
