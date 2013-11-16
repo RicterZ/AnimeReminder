@@ -424,4 +424,5 @@ class DelAnimeHandler(BaseHandler):
 
 
 application = web.application(urls, globals()).wsgifunc()
+
 		
