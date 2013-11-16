@@ -1,0 +1,87 @@
+{% extends "base.html" %} 
+{% block head %}
+<style>
+    h1#head { 
+      text-shadow:0px 0px 5px #000;
+      color:#FFF;
+    }
+    h1, h2, h4 {
+	  font-family:Tahoma, Helvetica, "Microsoft Yahei", "微软雅黑", Arial, STHeiti;
+      _font-family:Tahoma,Arial,Helvetica,STHeiti;
+    }
+    .anime h3,.anime p,.anime span{
+      display:inline; 	
+    }
+    div#animetitle {
+      white-space: nowrap;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      display:inline-block;
+      width:145px;
+    }
+
+</style>
+{% endblock %}
+{% block nav %}
+    <li class="active"><a href="/">主页</a></li>
+    <li><a href="##" data-toggle="modal" data-target="#searchModal">搜索</a></li>
+    <li><a href="/my">订阅</a></li>
+    <li><a href="/help">帮助</a></li>
+{% endblock %}
+{% block body %}
+<br />
+<div>
+<!--<span class="label label-success">公告：大部分动漫都快完结了，十月新番快出来了，大家有什么想看的么？对于我，《机巧少女不会受伤》和《悠哉日常大王》都是必追的呢~</span>-->
+<h1><img src="/static/img/db.png" /></h1><hr />
+{% for anime in animeList %}
+  <div class="anime img-thumbnail" id="anime">
+      <img class="img-thumbnail"
+      src="http://images.movie.xunlei.com/submovie_img/{{ anime[1][:2] }}/{{ anime[1] }}/{{ anime[2] }}_1_115x70.jpg"
+      onerror="this.src='/static/img/115x70.jpg'">&nbsp;&nbsp;
+  {% if anime[3] >= 1 %}
+      <div id="animetitle"><h4 style="display:inline;">
+          <strong><span class="badge">更新</span><a target="_blank" href="http://data.movie.kankan.com/movie/{{ anime[1] }}">{{ anime[0] }}</a></strong>
+      </h4></div><hr />
+      <div>
+        {% if anime[4] == 0 %}<span>更新到第 <span class="badge">{{ anime[2] }}</span> 集</span>
+        {% elif anime[4] == 1 %}<span>已完结，共 <span class="badge">{{ anime[2] }}</span> 集</span>
+        {% elif anime[4] == 2 %}<span class="badge">失效</span><span>更新到第 <span class="badge">{{ anime[2] }}</span> 集</span>
+        {% endif %}
+        <a style="float:right;" class="btn btn-primary" role="button" href="##" onclick="animeadd({{ anime[1] }})">添加 +</a>
+      </div>
+  {% else %}
+      <div id="animetitle"><h4 style="display:inline;">
+          <a target="_blank" href="http://data.movie.kankan.com/movie/{{ anime[1] }}">{{ anime[0] }}</a>
+      </h4></div><hr />
+      <div>
+        {% if anime[4] == 0 %}<span>更新到第 <span class="badge">{{ anime[2] }}</span> 集</span>
+        {% elif anime[4] == 1 %}<span>已完结，共 <span class="badge">{{ anime[2] }}</span> 集</span>
+        {% elif anime[4] == 2 %}<span class="badge">失效</span><span>更新到第 <span class="badge">{{ anime[2] }}</span> 集</span>
+        {% endif %}
+        <a style="float:right;" class="btn btn-primary" role="button" href="##" onclick="animeadd({{ anime[1] }})">添加 +</a>
+      </div>
+  {% endif %}
+  </div>
+{% endfor %}
+</div>
+<div id="schedule">
+<h1><img src="/static/img/fs.png"></h1><hr />
+<div id="myDiv"><img style="margin-left:50%;" src="/static/img/01.gif" /></div>
+</div>
+<script type="text/javascript">
+$(function(){
+    $.ajax({
+    type:'get',
+    url:'get_schedule',
+    data:'',
+    dataType:'text',
+    success:function(msg){
+        $("#myDiv").html(msg);
+    },
+    error:function(){
+        $("#myDiv").html("浏览器不支持AJAX");
+    }
+})})
+</script>
+
+{% endblock %};
