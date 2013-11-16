@@ -4,8 +4,9 @@
 #E-mail:canyuexiaolang@gmail.com
 #Website:http://www.ricter.info
 #-----------------------------------------------
-#------------------新番提醒功能类代码开始------------------
-from lib.anime import new_anime
+
+
+from lib.anime import AnimeDataGetter
 import urllib,urllib2
 import re, os
 import zipfile, datetime
@@ -28,22 +29,19 @@ urls=(
     '/add_anime', 'AddAnimeHandler',
     '/del_anime', 'DelAnimeHandler'
 )
-########################设置#########################
-dbhost  = '127.0.0.1'             ##数据库地址     ##
-dbtype  = 'mysql'                 ##数据库类型     ##
-dbname  = ''                      ##数据库名       ##
-dbun    = ''                      ##数据库用户名   ##
-dbpw    = ''                      ##数据库密码     ##
-luadir = 'animelua'               ##Lua下载目录设置##
-tempdir = '../templates'          ##模板目录设置   ##
-########################设置#########################
+
+dbhost  = '127.0.0.1'             #数据库地址
+dbtype  = 'mysql'                 #数据库类型
+dbname  = ''                      #数据库名
+dbun    = ''                      #数据库用户名
+dbpw    = ''                      #数据库密码
+
 
 global db
 global render
 db = web.database(host=dbhost, dbn=dbtype, db=dbname, user=dbun, pw=dbpw)
 render = web.template.render(os.path.abspath(os.path.dirname('/home/ricter/web/anime/ricter')) + '/templates/', cache=True)
-os.chdir(luadir)                                                                 #cd到下载lua文件的目录
-web.config.debug = False                                                        #关闭调试模式
+web.config.debug = False                                                         #关闭调试模式
 
 class BaseHandler:
     key = ''
@@ -103,13 +101,6 @@ class BaseHandler:
         if userAgentList[1] == 'Mobile':return 'Mobile'
         return 'Browser'
 
-class TestHandler(BaseHandler):
-    def GET(self):
-        animedata = []
-        if self.iskey and not self.iskeyerror:
-            for i in range(0, len(self.animelist)):
-                animedata.append([self.animelist[i], self.epilook[i], self.isread[i]])
-            return self.password, self.isremind, animedata
         
 class RegHandler(BaseHandler):
     def GET(self):
@@ -142,7 +133,7 @@ class RegHandler(BaseHandler):
 
         data = db.insert('user', email = email, password = password, emailid = '0', uid = uid)
         keyid = ''.join(random.sample(string.letters+string.digits, 10))
-        if self.isPlug:
+        if not self.isPlug:
             db.update('user', where="uid=" + uid, keyid = keyid)
         else:
             db.update('user', where="uid=" + uid, keyid_plug = keyid)
@@ -364,23 +355,20 @@ class AddAnimeHandler(BaseHandler):
             return 'ERROR_INVALID_AID'
 
         data = db.query('select * from anmielist where animeid="' + animeid + '"')
-        if not len(data) == 0:
+        if len(data) == 0:
             addData = False
         else:
             addData = True
 
         try:
             if addData:
-                xunlei = new_anime()
-                epinum = xunlei.getNewEpisode(animeid)
-                if not isinstance(epinum, int):
-                    epi, isoverbool = epinum[0], epinum[1]
-                    if int(epi) == 1 and int(isoverbool) == 1:return 'ERROR_INVALID_ANIME'
-                    if int(epi) > 0:
-                        data = db.insert('anmielist', animename=(xunlei.\
-                        getNameByID(animeid).strip('"')),animeid=animeid,episode=epi, isover=isoverbool)
-                    else:
-                        return 'ERROR_INVALID_AID'
+                anime = AnimeDataGetter()
+                isSuccess = anime.getDetail(animeid)
+                if isSuccess:
+                    db.insert('anmielist', animename = anime.AnimeTitle, \
+                        animeid = anime.AnimeAid, episode = anime.AnimeEpiCount,\
+                        isover = anime.AnimeIsOver, poster = anime.AnimePoster, \
+                        detail = anime.AnimeIntro)
                 else:
                     return 'ERROR_INVALID_AID'
         except:
