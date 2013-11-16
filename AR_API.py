@@ -35,7 +35,7 @@ dbtype  = 'mysql'                 #数据库类型
 dbname  = ''                      #数据库名
 dbun    = ''                      #数据库用户名
 dbpw    = ''                      #数据库密码
-
+tempdir = '../templates'          #模板目录设置
 
 global db
 global render
@@ -267,9 +267,9 @@ class AddAnimeHighLightHandler(BaseHandler):
 
 class ScheduleGetHandler(BaseHandler):
     def GET(self):
-        xunlei = new_anime()
+        anime = AnimeDataGetter()
         url = 'http://anime.kankan.com/'
-        reqdata = xunlei.getURL(url)
+        reqdata = anime.getURL(url)
 
         animelist, todaylist = [], []
         try:
@@ -360,19 +360,16 @@ class AddAnimeHandler(BaseHandler):
         else:
             addData = True
 
-        try:
-            if addData:
-                anime = AnimeDataGetter()
-                isSuccess = anime.getDetail(animeid)
-                if isSuccess:
-                    db.insert('anmielist', animename = anime.AnimeTitle, \
-                        animeid = anime.AnimeAid, episode = anime.AnimeEpiCount,\
-                        isover = anime.AnimeIsOver, poster = anime.AnimePoster, \
-                        detail = anime.AnimeIntro)
-                else:
-                    return 'ERROR_INVALID_AID'
-        except:
-            return 'ERROR_SYSTEM'
+        if addData:
+            anime = AnimeDataGetter()
+            isSuccess = anime.getDetail(animeid)
+            if isSuccess:
+                db.insert('anmielist', animename = anime.AnimeTitle, \
+                    animeid = anime.AnimeAid, episode = anime.AnimeEpiCount,\
+                    isover = anime.AnimeIsOver, poster = anime.AnimePoster, \
+                    detail = anime.AnimeIntro)
+            else:
+                return 'ERROR_INVALID_AID'
 
         try: 
             if not animeid in self.animelist:
