@@ -1,0 +1,58 @@
+{% extends "base.html" %} 
+{% block head %}
+<style>
+    h1#head { 
+      text-shadow:0px 0px 5px #000;
+      color:#FFF;
+    }
+    h1, h2, h3 {
+	  font-family:Tahoma, Helvetica, "Microsoft Yahei", "微软雅黑", Arial, STHeiti;
+      _font-family:Tahoma,Arial,Helvetica,STHeiti;
+    }
+
+</style>
+{% endblock %}
+{% block nav %}
+    <li><a href="/">主页</a></li>
+    <li><a href="##" data-toggle="modal" data-target="#searchModal">搜索</a></li>
+    <li><a href="/my">订阅</a></li>
+    <li class="active"><a href="/help">帮助</a></li>
+{% endblock %}
+{% block body %}
+<br />
+<h1>帮助与支持</h1><hr />
+<div>
+    <h2>#本网站</h2>
+    <p>本网站是有Ricter开发并维护的、提供免费第三方动漫（或者电视剧）更新提醒的网站。其</p>
+    <p><ul> 
+      <li>源来自迅雷看看</li>
+      <li>编写语言是Python</li>
+      <li>网站框架是web.py</li>
+      <li>模板是Jinja2</li>
+      <li>大部分CSS、JS来自Bootstrap</li>
+    </ul></p>
+    <p>本网站旨在提供第三方动漫更新提醒，不提供任何视频提供服务。且<strong>迅雷看看有权无条件终止本站运营。</strong></p>
+    <p>本网站以及基于本站开发的第三方应用禁止用于商业活动，若发生法律纠纷与本站开发者无关。</p>
+    <h2>#应用程序</h2>
+    <p>本网站提供API接口，任何人都有权调用。若您有意向开发第三方应用程序请联系站长邮箱。（原因是API可能随时添加，而API文档更改不及时）</p>
+    <p>本站现有第三方应用支持如下：</p>
+    <p><ul> 
+      <li>Windows Phone 8 <a target="_blank" href="http://www.windowsphone.com/s?appid=a36600f1-e7f8-4132-81e8-5b6ae65f6b05">新番提醒</a> by Madimo</li>
+      <li>Android 4.0 <a href="http://ricter.info/files/android/bangumiRemind.apk">新番提醒</a> by lain</li>
+    </ul></p>
+    <p>如果您有意向开发：</p>
+    <p><ul> 
+      <li>Windows 8</li>
+      <li>Windows Phone 7</li>
+      <li>Android 2.3以上</li>
+	  <li>iOS</li>
+    </ul></p>
+    <p>的应用，请联系站长商议。</p>
+    <h2>#扯淡</h2>
+      <p>官方QQ群：329881279&nbsp;&nbsp;<a target="_blank" href="http://wp.qq.com/wpa/qunwpa?idkey=df7e3d6f172026d1c2e8f4ee907c995885a5be2206c6a11035226deee0af7dc5"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="新番提醒器官方群" title="新番提醒器官方群"></a></p>
+      <p>官方微博：@小番番酱&nbsp;&nbsp;<a target="_blank" href="http://www.weibo.com/AnimeRemind">新浪微博</a>&nbsp;&nbsp;<a target="_blank" href="http://t.qq.com/AnimeReminder">腾讯微博</a></p>
+      <p>合作：<a target="_blank" href="http://tieba.baidu.com/f?kw=%B6%AF%C2%FE%D5%AC">动漫宅吧</a></p>
+    <h2>#联系方式</h2>
+    <p>Ricter邮箱：<a target="_blank" href="mailto:RicterZheng@gmail.com">RicterZheng@gmail.com</a></p>
+</div>
+{% endblock %}
