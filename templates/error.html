@@ -1,0 +1,26 @@
+{% extends "base.html" %} 
+{% block head %}
+<style>
+    h1#head { 
+      text-shadow:0px 0px 5px #000;
+      color:#FFF;
+    }
+    h1, h2 {
+	  font-family:Tahoma, Helvetica, "Microsoft Yahei", "微软雅黑", Arial, STHeiti;
+      _font-family:Tahoma,Arial,Helvetica,STHeiti;
+    }
+    .anime h3,.anime p,.anime span, .anime h2{
+      display:inline;
+    }
+</style>
+{% endblock %}
+{% block nav %}
+    <li class="active"><a href="/">主页</a></li>
+    <li><a href="##" data-toggle="modal" data-target="#searchModal">搜索</a></li>
+    <li><a href="/my">订阅</a></li>
+    <li><a href="/help">帮助</a></li>
+{% endblock %}
+{% block body %}
+    <br />
+    <h1>{{ errinfo }}</h1>
+{% endblock %}
