@@ -1,0 +1,99 @@
+{% extends "base.html" %} 
+{% block head %}
+<style>
+    h1#head { 
+      text-shadow:0px 0px 5px #000;
+      color:#FFF;
+    }
+    h1, h2, h4 {
+	  font-family:Tahoma, Helvetica, "Microsoft Yahei", "微软雅黑", Arial, STHeiti;
+      _font-family:Tahoma,Arial,Helvetica,STHeiti;
+    }
+    .anime h3,.anime p,.anime span{
+      display:inline;
+    }
+    div#anime {
+      box-shadow:0px 0px 0px #000;
+      height:300px;
+    }
+    div#animetitle {
+      white-space: nowrap;
+      text-overflow:ellipsis;
+      overflow:hidden;
+      display:inline-block;
+      width:145px;
+    }
+    .operalist span {
+        padding:20px;
+        display:inline;
+    }
+</style>
+{% endblock %}
+{% block nav %}
+    <li><a href="/">主页</a></li>
+    <li><a href="##" data-toggle="modal" data-target="#searchModal">搜索</a></li>
+    <li class="active"><a href="/my">订阅</a></li>
+    <li><a href="/help">帮助</a></li>
+{% endblock %}
+{% block body %}
+<h1>用户管理</h1>
+<hr />
+<div class="operalist" style="margin-top:20px;">
+    {% if isRemind == 0 %}
+    <span><a class="btn btn-success btn-lg" role="button" href="/changeremind?i=1">开启邮件提醒功能</a></span>
+    {% else %}
+    <span><a class="btn btn-primary btn-lg" role="button" href="/changeremind?i=0">关闭邮件提醒功能</a></span>
+    {% endif %}
+    <span><a class="btn btn-danger btn-lg" role="button" href="#" onclick="alert('暂未开放此功能')">修改密码</a></span>
+</div><hr />
+<h1>订阅管理</h1>
+<hr />
+<div>
+    {% for anime in highlightList %}
+        <div id="anime" class="anime img-thumbnail block">
+          <img class="img-thumbnail" 
+          src="http://images.movie.xunlei.com/submovie_img/{{ anime[1][:2] }}/{{ anime[1] }}/{{ anime[2] }}_1_115x70.jpg" 
+          onerror="this.src='/static/img/115x70.jpg'">
+          <div id="animetitle">
+              <h4><span class="badge">更新</span><strong><a target="_blank" href="http://data.movie.kankan.com/movie/{{ anime[1] }}">{{ anime[0] }}</a></strong></h4>
+          </div><hr />
+          <div>{% if anime[3] == 0 or anime[3] == 2 %}
+            更新到第 <span class="badge">{{ anime[2] }}</span> 集，观看到第 <input class="form-control" 
+            id="edit{{ anime[1] }}" style="display:inline;margin:0;padding:0;width:40px;text-align:center" 
+            type="text" value="{{ anime[4] }}"> 集
+            {% else %}
+            已完结，共 <span class="badge">{{ anime[2] }}</span> 集，观看到第 <input class="form-control" 
+            id="edit{{ anime[1] }}" style="display:inline;margin:0;padding:0;width:40px;text-align:center" 
+            type="text" value="{{ anime[4] }}"> 集
+            {% endif %}
+          </div><hr />
+            <a style="margin-top:5px" class="btn btn-primary" role="button" href="##" onclick="animedit({{ anime[1] }})">集数编辑</a>&nbsp;
+            <a style="margin-top:5px" class="btn btn-success" role="button" href="##" onclick="delhighlight({{ anime[1] }})">取消高亮</a>&nbsp;
+            <a style="margin-top:5px" class="btn btn-danger" role="button" href="##" onclick="animedel({{ anime[1] }})">删除订阅</a>
+        </div>
+    {% endfor %}
+    {% for anime in normalList %}
+        <div id="anime" class="anime img-thumbnail block">
+          <img class="img-thumbnail" 
+          src="http://images.movie.xunlei.com/submovie_img/{{ anime[1][:2] }}/{{ anime[1] }}/{{ anime[2] }}_1_115x70.jpg" 
+          onerror="this.src='/static/img/115x70.jpg'">
+          <div id="animetitle">
+            <h4><a target="_blank" href="http://data.movie.kankan.com/movie/{{ anime[1] }}">{{ anime[0] }}</a>
+          </h4></div><hr />
+          <div>{% if anime[3] == 0 or anime[3] == 2 %}
+            更新到第 <span class="badge">{{ anime[2] }}</span> 集，观看到第 <input class="form-control" 
+            id="edit{{ anime[1] }}" style="display:inline;margin:0;padding:0;width:40px;text-align:center" 
+            type="text" value="{{ anime[4] }}"> 集
+            {% else %}
+            已完结，共 <span class="badge">{{ anime[2] }}</span> 集，观看到第 <input class="form-control" 
+            id="edit{{ anime[1] }}" style="display:inline;margin:0;padding:0;width:40px;text-align:center" 
+            type="text" value="{{ anime[4] }}"> 集
+          {% endif %}
+          </div><hr />
+          <a style="margin-top:5px" class="btn btn-primary" role="button" href="##" onclick="animedit({{ anime[1] }})">集数编辑</a>&nbsp;
+          <a style="margin-top:5px" class="btn btn-info" role="button" href="##" onclick="addhighlight({{ anime[1] }})">设置高亮</a>&nbsp;
+          <a style="margin-top:5px" class="btn btn-danger" role="button" href="##" onclick="animedel({{ anime[1] }})">删除订阅</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
