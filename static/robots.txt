@@ -1,0 +1,2 @@
+sitemap:http://www.anime.ricter.info/sitemapxml/index.xml
+http://www.anime.ricter.info/sitemap/index.html

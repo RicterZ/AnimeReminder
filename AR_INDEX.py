@@ -12,12 +12,12 @@ import zipfile, random, hashlib
 import web
 import jinja2 as jj
 
-dbhost  = '127.0.0.1'             #数据库地址
+dbhost  = 'ricter.info'             #数据库地址
 dbtype  = 'mysql'                 #数据库类型
-dbname  = ''                      #数据库名
-dbun    = ''                      #数据库用户名
-dbpw    = ''                      #数据库密码
-tempdir = '../templates'          #模板目录设置
+dbname  = 'ricter_newanime'                      #数据库名
+dbun    = 'ricter'                      #数据库用户名
+dbpw    = 'CanyueROOTSmile'                      #数据库密码
+tempdir = 'templates'          #模板目录设置
 
 global db
 db = web.database(host=dbhost, dbn=dbtype, db=dbname, user=dbun, pw=dbpw)        #连接数据库
@@ -104,7 +104,7 @@ class IndexHandler(BaseHandler):
     def GET(self):
         data, animeList = db.query('select * from anmielist where 1 order by id desc limit 0,9'), []  #连接数据库，取前8个动漫数据用来在首页显示
         for i in data:                                             #生成动漫数据列表，格式为[[动漫名, 动漫id, 动漫集数, 是否为更新动漫, 是否完结]]
-            animeList.append([i.animename, i.animeid, i.episode, i.isnew, i.isover])                   #二维表格以便于处理
+            animeList.append([i.animename, i.animeid, i.episode, i.isnew, i.isover, i.detail])                   #二维表格以便于处理
 
         return self.render('animeList.html', '动漫更新表'.decode('utf8'), animeList = animeList, \
         isLogin = self.isLogin, uid = self.uid, newnum = self.updateNum)                               #返回值，部署到模板以显示
@@ -549,7 +549,7 @@ class ExitHandler:
         web.setcookie('session', 0, -1)
         return web.seeother('/')
 
-#app = web.application(urls, globals())
-#if __name__ == "__main__":app.run()
+app = web.application(urls, globals())
+if __name__ == "__main__":app.run()
 
-application = web.application(urls, globals()).wsgifunc()
+#application = web.application(urls, globals()).wsgifunc()

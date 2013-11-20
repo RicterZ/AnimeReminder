@@ -7,18 +7,17 @@ import os
 
 class AnimeDataGetter(object):
     AnimeAid      = ''
-    AnimeTitle    = ''
-    AnimePoster   = ''
-    AnimeIntro    = ''
-    AnimeEpiCount = ''
-    AnimeIsOver   = '0'
     _searchUrl    = 'http://mediaso.xmp.kankan.xunlei.com/search.php?keyword='
     _detailUrl    = 'http://data.pad.kankan.com/mobile/detail/'
     _subDetailUrl = 'http://data.pad.kankan.com/mobile/sub_detail/'
     _listUrl      = 'http://pianku.xmp.kankan.com/movielua/'
 
     def __init__(self):
-        pass
+       self.AnimeTitle    = ''
+       self.AnimePoster   = ''
+       self.AnimeIntro    = ''
+       self.AnimeEpiCount = ''
+       self.AnimeIsOver   = '0'
 
     def getURL(self, url):
         """
@@ -70,9 +69,9 @@ class AnimeDataGetter(object):
             file = open(id + '.lua', 'w+b');
             file.write(zfile.read(id + '.lua'))
             file.close();zfile.close()
-            os.remove(id + '.zip') 
         except Exception, e:
             print e
+            os.remove(id + '.zip') 
             return False
         else:
             openfile = open(id + '.lua', 'r')
@@ -87,18 +86,20 @@ class AnimeDataGetter(object):
             self.AnimeTitle    = smoviename.findall(subDetail)[0].decode('utf-8').split("=")[1].strip('"')
             if isover.findall(subDetail)[0].split("=")[1] == '0':
                 self.AnimeIsOver = '1'
+            openfile.close()
             os.remove(id + '.lua')
+            os.remove(id + '.zip') 
             return True
 
 #DEMO
 #----------------------------------------------------------
-anime = AnimeDataGetter()
-print anime.animeSearch('悠哉日常')
+"""anime = AnimeDataGetter()
+#print anime.animeSearch('悠哉日常')
 if anime.getDetail('74030'):
     print 'id:', anime.AnimeAid
     print 'title:', anime.AnimeTitle
     print 'poster:', anime.AnimePoster
     print 'intro:', anime.AnimeIntro
     print 'episodeCount:', anime.AnimeEpiCount
-    print 'isover:', anime.AnimeIsOver
+    print 'isover:', anime.AnimeIsOver"""
 #----------------------------------------------------------

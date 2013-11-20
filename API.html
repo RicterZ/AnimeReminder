@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>新番提醒API文档</title>
+<link href="/static/dist/css/bootstrap.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div style="width:80%;margin:auto;">
+<h1>新番提醒API文档2.0</h1>
+新番提醒现提供以下API：
+<h3>#用户登陆类：</h3>
+<pre><code>登陆：/login
+注册：/reg</code></pre>
+<h3>#用户操作类：</h3>
+<pre><code>添加订阅：/add_anime
+删除订阅：/del_anime
+获取用户订阅列表：/get_subscription_list
+获取用户邮箱提醒状态：/email_reminder_get
+修改用户邮箱提醒状态：/email_reminder_set
+将订阅标记为已读：/add_highlight
+将订阅标记为未读：/del_highlight
+用户观看集数编辑：/epiedit
+修改密码：/changepw</code></pre>
+<h3>#信息获取类：</h3>
+<pre><code>获取今日以及明日动漫放送表：/get_update_schedule
+其APP还应加入新番搜索功能，请求地址为：http://mediaso.xmp.kankan.xunlei.com/search.php，由开发者自行解析处理。</code></pre>
+<br />
+<b>API请求地址为：<a href="http://api2.ricter.info">http://api2.ricter.info</a></b>
+请求API无需认证，访问方式为GET方式，其所需参数应由“&”连接。<br />
+API的返回值可能如下（汉字为解释，不会显示在返回值中）：<br />
+<pre><code>ERROR_INVALID_DATA，数据提交错误，指参数不足或其他错误
+ERROR_INVALID_PSW，密码错误，在登陆以及修改密码时候可能遇到
+ERROR_INVALID_KEY，KEY错误，指KEY不存在，常见错误
+ERROR_INVALID_AID，AID错误，AID指的是订阅新番的ID号码，返回此错误原因是订阅可能不存在或者是电影
+ERROR_INVALID_NEWPW，新密码错误，指修改密码时新密码过长或过短
+ERROR_EXIST_EMAIL，EMAIL已被注册
+ERROR_EXIST_ANIME，订阅重复添加时的错误
+ERROR_INVALID_EPI，用户看到的集数错误，可能是大于总集数或小于0
+ERROR_SYSTEM，系统错误，和APP无关
+0，指操作执行成功
+形如：kqDfa2cBl0的字符串，即是keyid</code></pre>
+<h2>#login</h2>
+<p>必须参数：</p>
+<code>u：用户的Email地址</code>
+<code>p：用户密码</code>
+<p>返回值：</p>
+<code>{ERROR_INVALID_DATA|ERROR_INVALID_PSW|keyid}</code>
+<div>
+<h2>#reg</h2>
+<p>必须参数：</p>
+<code>u：用户的Email地址</code>
+<code>p：用户密码</code>
+<p class="text-warning"><b>APP端应该自行密码确认。另应该自行过滤特殊字符。</b></p>
+<p>返回值：</p>
+<code>{ERROR_INVALID_DATA|ERROR_EXIST_EMAIL|keyid}</code>
+<p class="text-success">PS：利用返回keyid可直接登陆。</p>
+<div class="bs-example">
+</div>
+</div>
+<h2>#get_subscription_list</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code>
+<p>返回值：</p>
+<b>形似于如下</b>
+<pre><code>72581|丧女|1|12|0|1
+72737|弹丸论破|2|12|11|0
+72809|恋爱研究所|0|12|9|2
+71127|科学的超电磁炮 第2季|0|23|23|0</code></pre>
+<p>拆分列表可得：</p>
+<pre><code>第一项，72581，订阅ID，即AID
+第二项，丧女，订阅名称
+第三项，{0|1|2}，完结状态，其中0为未完结，1为完结，2代表此订阅由于上游原因出现错误的特殊情况，算作未完结
+第四项，12，动漫目前的集数
+第五项，0,表示用户看到的集数
+第六项，{0|1|2}，已读状态，其中0为已读，1为未读，2是用于Windows Phone推送完成后的状态，表示未读</code></pre>
+<h2>#add_anime，del_anime</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code><br />
+<code>aid：订阅的ID，即AID</code><br />
+<p>返回值：</p>
+<code>{ERROR_INVALID_KEY|ERROR_INVALID_AID|*ERROR_INVALID_ANIME|*ERROR_EXIST_ANIME|ERROR_SYSTEM|0}</code><br />
+<p class="text-info">注：带*的是add_anime专属<p>
+<h2>#email_reminder_get</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code><br />
+<p>返回值：</p>
+<code>{0|1}</code><br />
+<p class="text-info">0是未开启，1是已开<p>  
+<h2>#email_reminder_set</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code><br />
+<code>enable：开启状态{0|1}，0为关闭，1为开启</code><br />
+<p>返回值：</p>
+<code>{0|1}</code><br />
+<h2>#add_highlight</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code><bDelAnimeHighLightHandlerr />
+<code>aid：订阅ID</code><br />
+<p>返回值：</p>
+<code>{ERROR_INVALID_KEY|ERROR_INVALID_AID|0}</code><br />
+<h2>#del_highlight</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code><br />
+<code>aid：订阅ID</code><br />
+<p>可选参数：</p>
+<code>status，值随意</code><br />
+<p class="text-info">此参数是Windows Phone推送通知，其他版本无视</p>
+<p>返回值：</p>
+<code>{ERROR_INVALID_KEY|ERROR_INVALID_AID|0}</code><br />
+<h2>#epiedit</h2>
+<p>必须参数：</p>
+<pre><code>key：用户的key
+aid：订阅ID
+epi：集数</code></pre>
+<p>返回值：</p>
+<code>{ERROR_INVALID_KEY|ERROR_INVALID_DATA|ERROR_INVALID_EPI|ERROR_SYSTEM}</code><br />
+<h2>#changepw</h2>
+<p>必须参数：</p>
+<code>key：用户的key</code><br />
+<code>oldpw：用户的原密码</code><br />
+<code>newpw：用户的新密码</code><br />
+<p>返回值：</p>
+<code>{ERROR_INVALID_KEY|ERROR_INVALID_NEWPW|ERROR_INVALID_PSW|ERROR_INVALID_DATA|0}</code><br />
+<p class="text-info">说明：成功会返回0，应用应返回重新登陆。<p>
+<h2>#get_update_schedule</h2>
+<p>无参数访问</p>
+<pre><code>返回更新的列表，形似：
+0|72650|Free!|09:00
+0|63265|玉响|10:30
+0|71131|Line Town|11:00
+0|65253|学活|13:00
+0|51453|纸箱战机Wars|15:00
+0|63810|宠物小精灵第四部|17:00
+0|71412|野兽传奇|18:00
+1|72737|弹丸论破|09:00
+1|72567|白银之匙|10:00
+1|72752|新蔷薇少女|10:30
+1|72730|女子高中C3部|12:00
+1|64540|战姬绝唱|14:00
+1|72834|归宅部活动记录|15:00
+1|70681|银河机攻队 MAJESTIC PRINCE|16:00</code></pre>
+<p>列表解析得：</p>
+<pre><code>第一项：{0|1}，0是今日，1是明日
+第二项：订阅的ID，即AID
+第三项：更新动漫名称
+第四项：更新时间</code></pre>
+<h2>#搜索</h2>
+<p class="text-warning">搜索功能由APP开发者自行解决。</p>
+<code>地址：http://mediaso.xmp.kankan.xunlei.com/search.php</code><br />
+<code>参数：keyword</code><br />
+<p>解析文本获得AID即可</p>
+</div>
+
+</body>
+</html>

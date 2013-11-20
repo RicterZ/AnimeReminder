@@ -1,0 +1,42 @@
+$def with (mainclass, *argv)
+$if mainclass == 'list':
+    $for anime in argv[0]:
+        $:anime[0]|$:anime[1]|$:anime[2]
+$if mainclass == 'list2':
+    <table class="table table-bordered">
+    <thead><tr><th>今日更新</th><th>时间</th></tr> </thead>
+    $for anime in argv[0]:
+            <thead>
+                <tr>
+                    <td id="addanime"><a target="_blank" href="$:anime.split('|')[2]">$:anime.split('|')[3]</a><a id="add" href="##" onclick="animeadd($:anime.split('|')[2][-5:])"><i class="icon-plus"></i></a></td>
+                    <td>今日 $:anime.split('|')[1] 更新</td>
+                </tr> 
+            </thead>
+    $if argv[1]:
+        <thead><tr><th>明日更新</th><th>时间</th></tr></thead>
+        $for anime in argv[1]:
+            <thead>
+                <tr>
+                    <td id="addanime"><a target="_blank" href="$:anime.split('|')[2]">$:anime.split('|')[3]</a><a id="add" href="##" onclick="animeadd($:anime.split('|')[2][-5:])"><i class="icon-plus"></i></a></td>
+                    <td>明日 $:anime.split('|')[1] 更新</td>
+                </tr> 
+            </thead>
+        </table>
+$if mainclass == 'list3':
+    $for anime in argv[0]:
+        $:anime
+$if mainclass == 'list4':
+    $for anime in argv[0]:
+        $:anime[0]|$:anime[1]|$:anime[2]|$:anime[3]
+$if mainclass == 'list5':
+    $for anime in argv[0]:
+        $:anime[0]|$:anime[1]|$:anime[2]|$:anime[3]|$:anime[4]|$:anime[5]
+$if mainclass == 'list6':
+    $for anime in argv[0]:
+        今天 $:anime.split('|')[1]|$:anime.split('|')[3]|$:anime.split('|')[2][-5:]
+    $if argv[1]:
+        $for anime in argv[1]:
+            明天 $:anime.split('|')[1]|$:anime.split('|')[3]|$:anime.split('|')[2][-5:]
+$if mainclass == 'search':
+    $for anime in argv[0]:
+        $:anime[0]|$:anime[1]

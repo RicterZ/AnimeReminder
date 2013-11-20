@@ -30,17 +30,18 @@ urls=(
     '/del_anime', 'DelAnimeHandler'
 )
 
-dbhost  = '127.0.0.1'             #数据库地址
+dbhost  = 'ricter.info'             #数据库地址
 dbtype  = 'mysql'                 #数据库类型
-dbname  = ''                      #数据库名
-dbun    = ''                      #数据库用户名
-dbpw    = ''                      #数据库密码
-tempdir = '../templates'          #模板目录设置
+dbname  = 'ricter_newanime'                      #数据库名
+dbun    = 'ricter'                      #数据库用户名
+dbpw    = 'CanyueROOTSmile'                      #数据库密码
+tempdir = 'templates\\'          #模板目录设置
 
 global db
 global render
 db = web.database(host=dbhost, dbn=dbtype, db=dbname, user=dbun, pw=dbpw)
-render = web.template.render(os.path.abspath(os.path.dirname('/home/ricter/web/anime/ricter')) + '/templates/', cache=True)
+render = web.template.render(tempdir, cache=True)
+#render = web.template.render(os.path.abspath(os.path.dirname('')) + tempdir, cache=True)
 web.config.debug = False                                                         #关闭调试模式
 
 class BaseHandler:
@@ -355,12 +356,13 @@ class AddAnimeHandler(BaseHandler):
             return 'ERROR_INVALID_AID'
 
         data = db.query('select * from anmielist where animeid="' + animeid + '"')
-        if len(data) == 0:
+        if not len(data) == 0:
             addData = False
         else:
             addData = True
 
         if addData:
+            print 'in addData'
             anime = AnimeDataGetter()
             isSuccess = anime.getDetail(animeid)
             if isSuccess:
@@ -422,7 +424,7 @@ class DelAnimeHandler(BaseHandler):
         else:
             return 0
 
-
-application = web.application(urls, globals()).wsgifunc()
-
+app = web.application(urls, globals())
+if __name__ == "__main__":app.run()
+#application = web.application(urls, globals()).wsgifunc()
 		
