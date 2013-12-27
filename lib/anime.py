@@ -11,6 +11,9 @@ class AnimeDataGetter(object):
     _detailUrl    = 'http://data.pad.kankan.com/mobile/detail/'
     _subDetailUrl = 'http://data.pad.kankan.com/mobile/sub_detail/'
     _listUrl      = 'http://pianku.xmp.kankan.com/movielua/'
+    fuckList = ['60773', '74299']
+    sname = re.compile(r'sname=".+?"')
+    imovieid = re.compile(r'imovieid=\d*')
 
     def __init__(self):
        self.AnimeTitle    = ''
@@ -37,15 +40,14 @@ class AnimeDataGetter(object):
         """
         data, searchList = data.split('\n'), []
         del data[:2];del data[-2:]
-        sname = re.compile(r'sname=".+?"');imovieid = re.compile(r'imovieid=\d*')
-        
         for i in data:
-            if sname.findall(i) and imovieid.findall(i):
-                searchList.append([sname.findall(i)[0].split('=')[1].strip('"'), \
-                imovieid.findall(i)[0].split('=')[1]])
+            if self.sname.findall(i) and self.imovieid.findall(i):
+                searchList.append([self.sname.findall(i)[0].split('=')[1].strip('"'), \
+                self.imovieid.findall(i)[0].split('=')[1]])
         return searchList
 
     def getDetail(self, id):
+        if id in self.fuckList:return self.getDetailByLua(id)
         try:
             detailData = self.getURL(self._detailUrl + id[:2] + '/' + id + '.json')
             detailDic = json.loads(detailData)
@@ -91,15 +93,23 @@ class AnimeDataGetter(object):
             os.remove(id + '.zip') 
             return True
 
-#DEMO
-#----------------------------------------------------------
-"""anime = AnimeDataGetter()
-#print anime.animeSearch('悠哉日常')
-if anime.getDetail('74030'):
-    print 'id:', anime.AnimeAid
-    print 'title:', anime.AnimeTitle
-    print 'poster:', anime.AnimePoster
-    print 'intro:', anime.AnimeIntro
-    print 'episodeCount:', anime.AnimeEpiCount
-    print 'isover:', anime.AnimeIsOver"""
-#----------------------------------------------------------
+
+
+if __name__ == "__init__":
+    anime = AnimeDataGetter()
+    print anime.animeSearch('悠哉日常')
+    if anime.getDetail('74022'):
+        print 'id:', anime.AnimeAid
+        print 'title:', anime.AnimeTitle
+        print 'poster:', anime.AnimePoster
+        print 'intro:', anime.AnimeIntro
+        print 'episodeCount:', anime.AnimeEpiCount
+        print 'isover:', anime.AnimeIsOver
+    anime.__init__()
+    if anime.getDetailByLua('74022'):
+        print 'id:', anime.AnimeAid
+        print 'title:', anime.AnimeTitle
+        print 'poster:', anime.AnimePoster
+        print 'intro:', anime.AnimeIntro
+        print 'episodeCount:', anime.AnimeEpiCount
+        print 'isover:', anime.AnimeIsOver
