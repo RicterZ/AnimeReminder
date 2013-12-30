@@ -17,8 +17,8 @@ var carousel = {
         $(".active").addClass("left");
         $(".next").addClass("active");
         $(".next").removeClass("next");
+        $(".left").removeClass("active");
         setTimeout(function(){
-            $(".left").removeClass("active");
             $(".weekday").text(weekDict[$(".main-schedule-item").index($(".active"))]);
             $(".active").prev().length==0?$(".main-schedule-item")[6].className+=" next":$(".active").prev().addClass("next");
         }, 600);

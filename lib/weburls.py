@@ -1,15 +1,15 @@
 from lib.handlers.BaseHandler import WebBaseHandler
 from lib.handlers.IndexHandler import *
-from lib.handlers.UserHandler import LoginHandler, APIRegHandler
+from lib.handlers.UserHandler import LoginHandler, APIRegHandler, CheckHandler
 from lib.handlers.SubScriptionHandler import *
 from lib.handlers.DataHandler import *
 from lib.handlers.HighlightHandler import *
-from lib.handlers.OthersHandler import *
 from lib.handlers.ScheduleHandler import *
 
 urls = (
     '/', 'gotoIndex',
     '/index', 'IndexHandler',
+    '/check', 'CheckHandler',
     '/login', 'LoginHandler',
     '/reg', 'RegHandler',
     '/my', 'GetUserInfoHandler',
