@@ -1,9 +1,0 @@
-$def with (mainclass, *data)
-$if mainclass == 'SUBLISTHANDLER':
-    $for anime in data[0]:
-        $:anime[0]|$:anime[1]|$:anime[2]|$:anime[3]|$:anime[4]|$:anime[5]
-$if mainclass == 'SCHEDLUE':
-    $for anime in data[0]:
-        0|$:anime.split('|')[2][-5:]|$:anime.split('|')[3]|$:anime.split('|')[1]
-    $for anime in data[1]:
-        1|$:anime.split('|')[2][-5:]|$:anime.split('|')[3]|$:anime.split('|')[1]

@@ -1,8 +1,15 @@
 from lib.handlers.BaseHandler import WebBaseHandler
 from lib.handlers.IndexHandler import *
+from lib.handlers.UserHandler import LoginHandler, APIRegHandler
+from lib.handlers.SubScriptionHandler import *
+from lib.handlers.DataHandler import *
+from lib.handlers.HighlightHandler import *
+from lib.handlers.OthersHandler import *
+from lib.handlers.ScheduleHandler import *
 
 urls = (
-    '/', 'IndexHandler',
+    '/', 'gotoIndex',
+    '/index', 'IndexHandler',
     '/login', 'LoginHandler',
     '/reg', 'RegHandler',
     '/my', 'GetUserInfoHandler',
@@ -14,8 +21,5 @@ urls = (
     '/highlight', 'HighLightHandler',
     '/epiedit', 'LookToEpiEditHandler',
     '/exit', 'ExitHandler',
-    '/active', 'ActiveHandler',
-    '/help', 'HelpHandler',
-    '/search', 'SearchHandler',    
-    '/(.*)', 'ErrorHandler'
+    '/search', 'SearchHandler', 
 )
