@@ -6,5 +6,6 @@ AnimeReminder
 ##第三次重构。
 
 基于：uwsgi+web.py   
-模板：jinja2   
-前端：Bootstrap3   
+
+采用不太标准的REST Framework。   
+
