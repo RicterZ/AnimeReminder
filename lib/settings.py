@@ -11,7 +11,6 @@ from lib.anime import AnimeDataGetter
 from lib.error import *
 
 web.config.debug = True
-#web.header('Content-type', "text/html; charset=utf-8")
 
 db = web.database(
     host = 'ricter.info',

@@ -16,6 +16,7 @@ class ScheduleGetHandler():
 
     def GET(self):
         """说明：这个渣渣正则我回头再写好了=-="""
+        web.header('Content-type', "application/json; charset=utf-8")
         anime = AnimeDataGetter()
         url = 'http://anime.kankan.com/'
         reqdata = anime.getURL(url)

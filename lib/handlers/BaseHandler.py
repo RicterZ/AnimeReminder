@@ -2,7 +2,6 @@
 from lib.settings import *
 
 class BaseHandler:
-
     def inputClean(self, inputData):
         return inputData.replace("'", '').replace('"', '').replace('\\', '')\
                         .replace('/', '').replace('?', '').replace(' ', '')
@@ -41,6 +40,7 @@ class APIBaseHandler(BaseHandler):
             self.isKey     = True
         except:
             self.isKey = False
+        web.header('Content-type', "application/json; charset=utf-8")
 
 
 
@@ -51,7 +51,7 @@ class WebBaseHandler(BaseHandler):
     def __init__(self):
         try:  
             c_id, key = web.cookies().id, web.cookies().session
-            userData       = db.select('user', where="keyid='%s'"%key)[0]
+            userData       = db.select('user', where="session='%s'"%key)[0]
             self.uid       = userData.id
             self.email     = userData.email
             self.password  = userData.password
@@ -63,8 +63,9 @@ class WebBaseHandler(BaseHandler):
             self.isreadstr = userData.isread
             self.isremind  = userData.isremind
             self.isLogin   = True
-            self.updateNum = userData.isread.count(1)
-        except:
+            self.updateNum = list(userData.isread).count('1')
+        except Exception, e:
             self.isLogin   = False
             self.updateNum = 0
             self.uid       = 0
+        web.header('Content-type', "application/json; charset=utf-8")

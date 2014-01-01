@@ -6,87 +6,19 @@
     <link href="./static/css/style.css" rel="stylesheet">
     <script src="./static/js/jquery.js"></script>
     <script src="./static/js/carousel.js"></script>
-    <script type="text/javascript">
-        var indexControl = {
-            _this: this,
-            returnData: {},
-            checkData: function(data, callback) {
-                callback(data.status == 200?data.data:false);
-            },
-            getData: function(url, callback, errortag) {
-                var _this = this;
-                $.ajax({
-                    type: "GET",
-                    url: url,
-                    dataType: "json",
-                    success: function(data){
-                        _this.checkData(data, callback);
-                    },
-                    error: function() {
-                        //_this.checkData(_this.returnData, callback);
-                        $(errortag).html("<p style='display:block;margin:0 auto;text-align:center'>您的浏览器不支持Ajax</p>");
-                    }
-                })
-            },
-            indexHander: function(updateData) {
-                var animeImageUrl = 'http://images.movie.xunlei.com/submovie_img/';
-                var animeUrl = 'http://data.movie.kankan.com/movie/';
-                var ul = $(".main-update-container");
-                var j = 0;
-                if (updateData) {
-                    for (i=0;i<updateData.length;i++) {
-                        if (i == updateData.length / 2) 
-                            j = 1;
-                        var m = updateData[i].animeid;
-                        var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+updateData[i].episode+'_1_115x70.jpg';
-                        $('<li class="main-update-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a href="'+animeUrl+updateData[i].animeid+'">'+updateData[i].name+'</a></p><p class="update-title">更新到 <span class="episode">'+updateData[i].episode+'</span> 集</p></li>').appendTo(ul[j]);
-                    };
-                };
-                $(".update-load").hide();
-                setInterval(function(){carousel.next()}, 10000);
-            },
-            scheduleHandler: function(updateData) {
-                var animeImageUrl = 'http://images.movie.xunlei.com/submovie_img/';
-                if (updateData) {
-                    for (i=0;i<updateData.length;i++) {
-                        var m = updateData[i].url.split('/')[4];
-                        var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+'1_1_115x70.jpg';
-                        $('<li class="update-schedule-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a href="'+updateData[i].url+'">'+updateData[i].name+'</a></p><p class="update-title">'+updateData[i].time+' 更新</p></li>').appendTo($(".update-schdele-container")[updateData[i].week]);
-                    }
-                }
-                $('<a class="carousel-control" href="#prev" data-slide="prev">‹</a><a class="carousel-control control-right" href="#next" data-slide="next">›</a>').appendTo($(".main-schedule-container"));
-                $(".carousel-control").click(function(){carousel[this.attributes[2].value]();})
-                $(".weekday").show();
-                $(".schedule-load").hide();
-            },
-            loginHandler: function() {
-                var loginUrl = '/login';
-                $.ajax({
-                    type: "POST",
-                    url: loginUrl,
-                    data: '',
-                    dataType: "json",
-                    success: function(data){
-                        if (data.status != 200) {
-                            $(".login-error").text(data.message);
-                            $(".login-error").show();
-                        } else {
-                            //跳转个人主页
-                        }
-                    },
-                    error: function() {
-                        $(".login-error").text("登录失败QAQ!");
-                        $(".login-error").show();
-                    }
-                })
-            }
-        }
-
-        $(function(){
-            indexControl.getData('/index', indexControl.indexHander, ".main-update-ul-container");
-            indexControl.getData('/get_update_schedule', indexControl.scheduleHandler, ".main-schedule-container");
-            $(".button").click(function(){indexControl[this.attributes[1].value]()})
+    <script src="./static/js/indexControl.js"></script>
+    <script src="./static/js/global.js"></script>
+    <script>
+    $(function(){
+        indexControl.__init__();
+        indexControl.getData('/index', indexControl.indexHander, ".main-update-ul-container");
+        indexControl.getData('/get_update_schedule', indexControl.scheduleHandler, ".main-schedule-container");
+        $(".button").click(function(){
+            console.log(this.dataset);
+            if (this.dataset.type != 'undo')
+                indexControl[this.dataset.type]();
         });
+    });
     </script>
 </head>
 
@@ -105,7 +37,7 @@
                 </li>
                 <li class="main-w">
                     <img class="main-w-img" src="./static/img/w/w1.jpg">
-                    <p class="main-w-text">啊咧，我的约炮大作战（雾）看到多少集了呢>.<，新番提醒给你记录啦，这样又能追番又能记录~妈妈再也不担心~</p>
+                    <p class="main-w-text">啊咧，我的约炮大作战（雾）看到多少集了呢&gt;.&lt;，新番提醒给你记录啦，这样又能追番又能记录~妈妈再也不担心~</p>
                 </li>
                 <li class="main-w">
                     <img class="main-w-img" src="./static/img/w/w3.jpg">
@@ -144,12 +76,13 @@
             <p class="main-add-intro">快注册个新番提醒账号吧~还有WP、Android、iOS的客户端哦~</p>
             <div class="reg-login-container">
                 <form class="form reg">
-                    <p class="main-add-intro white">我要注册>A<</p>
+                    <p class="main-add-intro white">我要注册&gt;A&lt;</p>
                     <input type="text" name="email" placeholder="邮箱"/>
                     <input type="password" name="password" placeholder="密码" />
                     <input type="password" name="password2" placeholder="密码确认" />
-                    <p class="button" data-type="regHandler">点我注册>////<</p>
+                    <p class="button" data-type="regHandler">点我注册&gt;////&lt;</p>
                     <p class="error reg-error"></p>
+                    <p class="ok reg-ok"></p>
                 </form>
                 <form class="form login">
                     <p class="main-add-intro white">直接登录=w=</p>
@@ -157,7 +90,15 @@
                     <input type="password" name="password" placeholder="密码" />
                     <p class="button" data-type="loginHandler">点我登录Q^Q</p>
                     <p class="error login-error"></p>
+                    <p class="ok login-ok"></p>
                 </form>
+            </div>
+        </div>
+        <div class="myself">
+            <p class="main-add">喂喂喂，你来了</p>
+            <p class="main-add-intro">快去自己个人主页看看嘛~</p>
+            <div class="main-goto">
+                <a class="button large" data-type="undo" href="/my.html">快去~</a>
             </div>
         </div>
         <div class="hr-line"></div>

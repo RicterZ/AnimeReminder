@@ -1,0 +1,143 @@
+a.nostyle {
+    color: #FFF;
+}
+
+a.nostyle:hover {
+    color: #FFF;
+    text-decoration: blink;
+}
+
+.my-header {
+    width: 100%;
+    background: #63B8FF;
+    height: 60px;
+}
+
+.my-header-title {
+    margin: 0 0 0 20px;
+    display: inline-block;
+    color: #FFF;
+    padding: 5px;
+    font-size: 40px;
+    font-weight: 300;
+}
+
+.my-email {
+    color: #FFF;
+    font-size: 20px;
+    line-height: 60px;
+    display: inline-block;
+    float: right;
+    margin: 0 20px 0 0;
+}
+
+.my-main-subscript, .my-main-info {
+    width: 80%;
+    margin: 30px auto 0 auto;
+}
+
+.my-main-subscript-title {
+    font-weight: 300;
+}
+
+.option {
+    width: 68px;
+    height: 34px;
+    border-radius: 50px;
+    background: #ccc;
+    display: inline-block;
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+.button-option {
+    height: 34px;
+    width: 34px;
+    border-radius: 100%;
+    background: #63B8FF;
+    display: inline-block;
+    position: relative;
+    -webkit-transition: all 400ms;
+    -moz-transition: all 400ms;
+    transition: all 400ms;
+
+}
+
+.open {
+    left: 0;
+}
+
+.close {
+    left: 34px;
+    background: #999999;
+}
+
+.anime-title {
+    font-size: 24px;
+    height: 28px;
+    padding: 2px;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #000;
+}
+
+.anime-title:hover {
+    color: #000;
+    text-decoration: blink;
+}
+
+.anime-item {
+    width: 30%;
+    margin: 0 1%;
+    display: inline-block;
+    float: left;
+}
+
+.anime-info {
+    font-size: 15px;
+    height: 18px;
+    padding: 5px;
+    color: #FFF;
+    background: #63B8FF;
+    border-radius: 10px;
+    vertical-align: bottom;
+    display: inline-block;
+}
+
+.anime-img {
+    margin: 10px 0;
+    width: 90%;
+    padding: 20px 5%;
+    background: #FFF;
+    border-radius: 6px;
+}
+
+.anime-epi {
+    position: relative;
+    bottom: 63px;
+    color: #FFF;
+    font-size: 25px;
+    margin: 0 auto;
+    background: #000;
+    opacity: 0.5;
+    width: 90%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.unread-sub {
+    background: #42BE48;
+}
+
+.red {
+    margin: 20px 0;
+    display: inline-block;
+    background: #CE3939;
+}
+
+.red:hover {
+    background: #EC6A6A;
+}

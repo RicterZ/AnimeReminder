@@ -1,6 +1,6 @@
-from lib.handlers.BaseHandler import WebBaseHandler
+from lib.handlers.BaseHandler import *
 from lib.handlers.IndexHandler import *
-from lib.handlers.UserHandler import LoginHandler, APIRegHandler, CheckHandler
+from lib.handlers.UserHandler import *
 from lib.handlers.SubScriptionHandler import *
 from lib.handlers.DataHandler import *
 from lib.handlers.HighlightHandler import *
@@ -12,8 +12,8 @@ urls = (
     '/check', 'CheckHandler',
     '/login', 'LoginHandler',
     '/reg', 'RegHandler',
-    '/my', 'GetUserInfoHandler',
-    '/email_reminder_set', 'EmailStatusSetHandler',
+    '/my', 'WebGetUserInfoHandler',
+    '/email_reminder_set', 'WebEmailStatusSetHandler',
     '/get_update_schedule', 'ScheduleGetHandler',
     '/changepw', 'ChangePasswordHandler',
     '/add_anime', 'AddAnimeHandler',

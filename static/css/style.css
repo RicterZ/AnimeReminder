@@ -192,6 +192,7 @@ input {
     color: #000;
     width: 100%;
     float: left;
+    left: 0;
     -webkit-transition: .6s ease-in-out all;
     -moz-transition: .6s ease-in-out all;
     transition: .6s ease-in-out all;
