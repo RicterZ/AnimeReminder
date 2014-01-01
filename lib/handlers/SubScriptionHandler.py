@@ -1,4 +1,4 @@
-from lib.handlers.BaseHandler import APIBaseHandler
+from lib.handlers.BaseHandler import *
 from lib.settings import *
 
 class AddAnimeHandler(APIBaseHandler):
@@ -64,7 +64,7 @@ class LookToEpiEditHandler(APIBaseHandler):
             epinum = str(int(webinput.epi))
         except:
             return returnData(500, UnknowErrorMessage)
-        if not (epinum and animeid): return returnData(500, UnknowErrorMessage)
+        if not epinum or not animeid: return returnData(500, UnknowErrorMessage)
         episode = db.select('anmielist',what='episode',where='animeid=%s'%animeid)
         if not episode: return returnData(500, AnimeNotExistMessage)
         episode = episode[0].episode
@@ -74,4 +74,25 @@ class LookToEpiEditHandler(APIBaseHandler):
 
         self.epilook[self.animelist.index(animeid)] = epinum
         db.update('user',where="id=%d"%self.id,epilook='|'.join(self.epilook)+'|')
+        return returnData()
+
+class EpiEditHandler(WebBaseHandler):
+    def GET(self):
+        if not self.isLogin: return returnData(500, KeyErrorMessage)
+        webinput = web.input(aid='',epi='0')
+        try: 
+            animeid = str(int(webinput.aid))
+            epinum = str(int(webinput.epi))
+        except:
+            return returnData(500, UnknowErrorMessage)
+        if not epinum or not animeid: return returnData(500, UnknowErrorMessage)
+        episode = db.select('anmielist',what='episode',where='animeid=%s'%animeid)
+        if not episode: return returnData(500, AnimeNotExistMessage)
+        episode = episode[0].episode
+
+        if not animeid in self.animelist: return returnData(500, AnimeErrorMessage)
+        if int(episode) < int(epinum): return returnData(500, EpisodeErrorMessage)
+
+        self.epilook[self.animelist.index(animeid)] = epinum
+        db.update('user',where="id=%d"%self.uid,epilook='|'.join(self.epilook)+'|')
         return returnData()

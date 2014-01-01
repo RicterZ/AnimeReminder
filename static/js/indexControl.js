@@ -137,8 +137,8 @@ var indexControl = {
         var _this = this;
         var imgurl = 'http://images.movie.xunlei.com/submovie_img/';
         var animeUrl = 'http://data.movie.kankan.com/movie/';
-        var overdic = function(status, read) {
-            return status==1?'<span class="anime-info'+read+'">已完结</span>':'<span class="anime-info'+read+'">更新中</span>'
+        var overdic = function(status, read, aid) {
+            return status==1?'<span class="anime-info'+read+'" data-animeid="'+aid+'">已完结</span>':'<span class="anime-info'+read+'" data-animeid="'+aid+'">更新中</span>'
         };
         var emailDiic = {
             0: 'close',
@@ -160,11 +160,36 @@ var indexControl = {
                     $(".button-option").addClass(emailDiic[data.email]);
                     for (var i=0;i<data.subscription.length;i++) {
                         var url = data.subscription[i].id.toString().substring(0,2) + '/' + data.subscription[i].id + '/' + data.subscription[i].episode + '_1_115x70.jpg';
-                        var read = data.subscription[i].isread==1?" unread-sub":"";
-                        var info = overdic(data.subscription[i].isover, read);
-                        $('<div class="anime-item"><a class="anime-title" target="_black" href="'+animeUrl+data.subscription[i].id+'">'+info+data.subscription[i].name+'</a><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p></div>').appendTo(".subscript-container");
-                        console.log(data.subscription[i]);
+                        var read = data.subscription[i].isread==1?" unread-sub":" read-sub";
+                        var info = overdic(data.subscription[i].isover, read, data.subscription[i].id);
+                        $('<div class="anime-item"><p class="anime-title">'+info+'<a class="anime-title-a" target="_black" href="'+animeUrl+data.subscription[i].id+'">'+data.subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+data.subscription[i].watch+'</span><input data-animeid="'+data.subscription[i].id+'" value="'+data.subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
                     };
+                    $('.watchepi').click(function(){
+                    	$(this).addClass('hidden');
+                    	$(this).next().removeClass('hidden');
+                    });
+                    $('.anime-epi-input').blur(function(){
+                    	$(this).addClass('hidden');
+                    	$(this).prev().removeClass('hidden');
+                    	if (_this.epiEdit($(this).data().animeid, $(this)[0].value)) {
+                    		$(this).prev().text($(this)[0].value);
+                    	} else {
+                    		$(this)[0].value=$(this).prev().text();
+                    	}
+                    });
+                    $(".anime-info").click(function(){
+                    	if (this.className == "anime-info unread-sub") {
+                    		if (_this.highlight($(this).data().animeid, 'del')) {
+                    			$(this).addClass("read-sub");
+                    			$(this).removeClass("unread-sub");
+                    		}
+                    	} else {
+                    		if (_this.highlight($(this).data().animeid, 'add')) {
+                    			$(this).addClass("unread-sub");
+                    			$(this).removeClass("read-sub");
+                    		}
+                    	}
+                    });
                 }
             },
             error: function() {
@@ -181,7 +206,6 @@ var indexControl = {
             dataType: "json",
             async: false,
             success: function(data){
-                console.log(data.status);
                 bool = data.status==200?true:false;
             },
             error: function() {
@@ -189,6 +213,40 @@ var indexControl = {
             }
         });
         return bool;
-    }
+    },
+    epiEdit: function(aid, epi) {
+        var bool;
+        $.ajax({
+            type: "GET",
+            url: '/epiedit',
+            data: {aid: aid, epi: epi, hash: Math.random()},
+            dataType: "json",
+            async: false,
+            success: function(data){
+                bool = data.status==200?true:false;
+            },
+            error: function() {
+                bool = false;
+            }
+        });
+        return bool;
+    },
+    highlight: function(aid, method) {
+        var bool;
+        $.ajax({
+            type: "GET",
+            url: '/highlight',
+            data: {aid: aid, method: method, hash: Math.random()},
+            dataType: "json",
+            async: false,
+            success: function(data){
+                bool = data.status==200?true:false;
+            },
+            error: function() {
+                bool = false;
+            }
+        });
+        return bool;
+    },
 }
 

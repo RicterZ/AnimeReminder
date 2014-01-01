@@ -73,6 +73,7 @@ a.nostyle:hover {
 }
 
 .anime-title {
+    display: inline-block;
     font-size: 24px;
     height: 28px;
     padding: 2px;
@@ -83,7 +84,12 @@ a.nostyle:hover {
     color: #000;
 }
 
-.anime-title:hover {
+
+.anime-title-a {
+    color: #000;
+}
+
+.anime-title-a:hover {
     color: #000;
     text-decoration: blink;
 }
@@ -128,8 +134,19 @@ a.nostyle:hover {
     overflow: hidden;
 }
 
+.read-sub {
+    -webkit-transition: all 400ms;
+    -moz-transition: all 400ms;
+    transition: all 400ms;
+    cursor: pointer;
+}
+
 .unread-sub {
+    -webkit-transition: all 400ms;
+    -moz-transition: all 400ms;
+    transition: all 400ms;
     background: #42BE48;
+    cursor: pointer;
 }
 
 .red {
@@ -140,4 +157,36 @@ a.nostyle:hover {
 
 .red:hover {
     background: #EC6A6A;
+}
+
+.watch {
+    background: #FFF;
+    font-size: 20px;
+    position: relative;
+    bottom: 55px;
+    padding: 0 5% 5%;
+    border-radius: 0 0 6px 6px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.anime-epi-input {
+    display: inline;
+    width: 36px;
+    margin: 0;
+    padding: 0 10px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.watchepi {
+    display: inline-block;
+    height: 30px;
+    border: 2px solid #FFF;
+    padding: 0 10px;
+}
+
+.hidden {
+    display: none;
 }
