@@ -66,7 +66,7 @@ var indexControl = {
             };
         };
         $(".update-load").hide();
-        setInterval(function(){carousel.next()}, 10000);
+        carousel.__init__();
     },
     scheduleHandler: function(updateData) {
         var animeImageUrl = 'http://images.movie.xunlei.com/submovie_img/';
@@ -77,8 +77,6 @@ var indexControl = {
                 $('<li class="update-schedule-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a target="_black" href="'+updateData[i].url+'">'+updateData[i].name+'</a></p><p class="update-title">'+updateData[i].time+' 更新</p></li>').appendTo($(".update-schdele-container")[updateData[i].week]);
             }
         }
-        $('<a class="carousel-control" href="#prev" data-slide="prev">‹</a><a class="carousel-control control-right" href="#next" data-slide="next">›</a>').appendTo($(".main-schedule-container"));
-        $(".carousel-control").click(function(){carousel[this.attributes[2].value]();})
         $(".weekday").show();
         $(".schedule-load").hide();
     },
@@ -103,7 +101,7 @@ var indexControl = {
                 } else {
                     $(".login-ok").text("登陆成功wwww!");
                     $(".login-ok").show();
-                    location.href = '/my.html';
+                    location.href = '/user';
                 }
             },
             error: function() {
@@ -123,13 +121,13 @@ var indexControl = {
             success: function(data){
                 console.log(data.status);
                 if (data.status != 200) {
-                    location.href = '/index.html';
+                    location.href = '/';
                 } else {
                     _this.myHandler();
                 }
             },
             error: function() {
-                location.href = '/index.html';
+                location.href = '/';
             }
         })
     },
@@ -182,11 +180,13 @@ var indexControl = {
                     		if (_this.highlight($(this).data().animeid, 'del')) {
                     			$(this).addClass("read-sub");
                     			$(this).removeClass("unread-sub");
+                                $(".unread-num").text(parseInt($(".unread-num").text())-1);
                     		}
                     	} else {
                     		if (_this.highlight($(this).data().animeid, 'add')) {
                     			$(this).addClass("unread-sub");
                     			$(this).removeClass("read-sub");
+                                $(".unread-num").text(parseInt($(".unread-num").text())+1);
                     		}
                     	}
                     });

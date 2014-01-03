@@ -387,3 +387,17 @@ a.button:hover {
 .myself {
     display: none;
 }
+
+.blue {
+    background: #63B8FF;
+}
+
+.blue:hover {
+    background: #9DD2FF;
+}
+
+.inline {
+    float: right;
+    display: inline-block;
+    margin: 0;
+}

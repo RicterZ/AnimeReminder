@@ -9,9 +9,9 @@
     <script src="./static/js/indexControl.js"></script>
     <script src="./static/js/global.js"></script>
     <script>
-    $(function() {
+    $$(function() {
 	    indexControl.myHandlerCheck();
-	    var emailOption = new OptionButton($("#email"));
+	    var emailOption = new OptionButton($$("#email"));
 	    emailOption.obj.click(function(){emailOption.click({
 		    open: function() {return indexControl.emailReminderSet('1');},
 		    close: function() {return indexControl.emailReminderSet('0');}
@@ -26,7 +26,7 @@
     </div>
     <div class="my-main">
         <div class="my-main-subscript">
-            <h1 class="my-main-subscript-title">我的订阅&nbsp;(<span class="unread">未读: <span class="unread-num">loading...</span></span>)</h1><br />
+            <h1 class="my-main-subscript-title">我的订阅&nbsp;(<span class="unread">未读: <span class="unread-num">loading...</span></span>)<a class="button inline" data-type="undo" href="/search">添加</a></h1>
             <div class="subscript-container">
             </div>
         </div>
@@ -43,6 +43,12 @@
             <a href="http://ricter.info">Ricter</a>
             Powered By
             <a href="http://github.com/RicterZ/AnimeReminder">新番提醒</a>
+            |
+            <a href="/devtimeline">更新时间线</a>
+            |
+            <a href="https://gist.github.com/RicterZ/8134886">API 3.0</a>
+            |
+            <a href="/disclaimer">免责声明</a>
         </p>
     </div>
 </body>

@@ -23,20 +23,4 @@ class IndexHandler(WebBaseHandler):
             "message": "",
             "data": animeList
         })
-        #return self.render('animeList.html', '动漫更新表'.decode('utf8'), animeList = animeList, \
-        #isLogin = self.isLogin, uid = self.uid, newnum = self.updateNum)
 
-
-class SearchHandler(WebBaseHandler):
-    def GET(self):
-        anime = AnimeDataGetter()
-        animename = web.input(n='').n 
-        if animename:
-            return self.render(
-                'search.html', "搜索结果".decode('utf8'),
-                searchResultList = anime.animeSearch(animename.encode('gbk')),
-                isLogin = self.isLogin, 
-                newnum = self.updateNum
-            ) 
-        else:
-            return web.seeother('/')

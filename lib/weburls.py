@@ -5,9 +5,12 @@ from lib.handlers.SubScriptionHandler import *
 from lib.handlers.DataHandler import *
 from lib.handlers.HighlightHandler import *
 from lib.handlers.ScheduleHandler import *
+from lib.handlers.PageHandler import *
+from lib.handlers.SearchHandler import *
 
 urls = (
-    '/', 'gotoIndex',
+    '/', 'IndexPage',
+    '/user', 'UserPage',
     '/index', 'IndexHandler',
     '/check', 'CheckHandler',
     '/login', 'LoginHandler',

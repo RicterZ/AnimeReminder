@@ -9,11 +9,11 @@
     <script src="./static/js/indexControl.js"></script>
     <script src="./static/js/global.js"></script>
     <script>
-    $(function(){
+    $$(function(){
         indexControl.__init__();
         indexControl.getData('/index', indexControl.indexHander, ".main-update-ul-container");
         indexControl.getData('/get_update_schedule', indexControl.scheduleHandler, ".main-schedule-container");
-        $(".button").click(function(){
+        $$(".button").click(function(){
             console.log(this.dataset);
             if (this.dataset.type != 'undo')
                 indexControl[this.dataset.type]();
@@ -98,7 +98,8 @@
             <p class="main-add">喂喂喂，你来了</p>
             <p class="main-add-intro">快去自己个人主页看看嘛~</p>
             <div class="main-goto">
-                <a class="button large" data-type="undo" href="/my.html">快去~</a>
+                <a class="button large" data-type="undo" href="/user">快去~</a>
+                <a class="button large blue" data-type="undo" href="/search">搜索添加&gt;w&lt;</a>
             </div>
         </div>
         <div class="hr-line"></div>
@@ -109,6 +110,12 @@
             <a href="http://ricter.info">Ricter</a>
             Powered By
             <a href="http://github.com/RicterZ/AnimeReminder">新番提醒</a>
+            |
+            <a href="/devtimeline">更新时间线</a>
+            |
+            <a href="https://gist.github.com/RicterZ/8134886">API 3.0</a>
+            |
+            <a href="/disclaimer">免责声明</a>
         </p>
     </div>
 </body>
