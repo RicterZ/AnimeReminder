@@ -50,7 +50,7 @@ class WebBaseHandler(BaseHandler):
 
     def __init__(self):
         try:  
-            c_id, key = web.cookies().id, web.cookies().session
+            c_id, key = web.cookies().id, self.inputClean(web.cookies().session)
             userData       = db.select('user', where="session='%s'"%key)[0]
             self.uid       = userData.id
             self.email     = userData.email
