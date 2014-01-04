@@ -2,7 +2,7 @@ var carousel = {
     __init__: function(){
         var _this = this;
         $('<a class="carousel-control" href="#prev" data-slide="prev">‹</a><a class="carousel-control control-right" href="#next" data-slide="next">›</a>').appendTo($(".main-schedule-container"));
-        $(".carousel-control").click(function(){carousel[this.attributes[2].value]();})
+        $(".carousel-control").click(function(){carousel[this.attributes['data-slide'].nodeValue]();})
         _this.interval = setInterval(function(){carousel.next()}, 10000);
         $(".main-schedule-container").hover(
             function(){clearInterval(_this.interval)}, 

@@ -19,6 +19,28 @@ class LoginHandler(WebBaseHandler):
         web.setcookie('session', key, 10000000)
         return returnData()
 
+
+class RegHandler(WebBaseHandler):
+    def POST(self):
+        webinput = web.input(u='',p='')
+        email, password = self.inputClean(webinput.u), webinput.p
+        if not (email or password): return returnData(500, UnknowErrorMessage)
+        if len(webinput.p) < 6 or len(webinput.p) > 16:
+            return returnData(500, PasswordFormatMessage)
+        password = self.pwToMD5(web.input().p)
+        if not self.checkEmail(email): return returnData(500, EmailErrorMessage)
+        data = db.select('user', where="email='%s'"%email)
+        if not len(data) == 0: return returnData(500, EmailExistMessage)
+
+        key = self.makeKey()
+        data = db.insert('user',email=email,password=password,emailid='0',session=key)
+        userData = db.select('user', where="email='%s'"%email, what="id")[0]
+        web.setcookie('id', userData.id, 10000000)
+        web.setcookie('email', email, 10000000)
+        web.setcookie('session', key, 10000000)
+        return returnData()
+
+
 class CheckHandler(WebBaseHandler):
     def POST(self):
         webinput = web.input(id='',session='')

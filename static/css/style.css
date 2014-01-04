@@ -42,10 +42,11 @@ a:hover {
 .form {
     padding: 20px;
     min-width: 250px;
-    height: 280px;
+    /*height: 280px;*/
     display: inline-block;
     background: #63B8FF;
     border-radius: 20px;
+    margin-bottom: 30px;
 }
 
 input {

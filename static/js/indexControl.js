@@ -86,6 +86,7 @@ var indexControl = {
         $(".login-ok").show();
         var loginUrl = '/login';
         if ($(".login")[0][0].value == "" || $(".login")[0][1].value == "") {
+            $(".login-ok").hide();
             $(".login-error").text("要填上邮箱和密码0.0");
             $(".login-error").show();
             return;
@@ -97,6 +98,7 @@ var indexControl = {
             dataType: "json",
             success: function(data){
                 if (data.status != 200) {
+                    $(".login-ok").hide();
                     $(".login-error").text(data.message);
                     $(".login-error").show();
                 } else {
@@ -108,6 +110,45 @@ var indexControl = {
             error: function() {
                 $(".login-error").text("登录失败QAQ!");
                 $(".login-error").show();
+            }
+        })
+    },
+    regHandler: function() {
+        $(".reg-error").hide();
+        $(".reg-ok").text("正在注册~~");
+        $(".reg-ok").show();
+        var regUrl = '/reg';
+        if ($(".reg")[0][0].value == "" || $(".reg")[0][1].value == "" || $(".reg")[0][2].value == "") {
+            $(".reg-ok").hide();
+            $(".reg-error").text("要填上邮箱和密码0.0");
+            $(".reg-error").show();
+            return;
+        };
+        if ($(".reg")[0][1].value != $(".reg")[0][2].value) {
+            $(".reg-ok").hide();
+            $(".reg-error").text("两次输入的密码不一样啦");
+            $(".reg-error").show();
+            return;
+        };
+        $.ajax({
+            type: "POST",
+            url: regUrl,
+            data: {u: $(".reg")[0][0].value, p: $(".reg")[0][1].value},
+            dataType: "json",
+            success: function(data){
+                if (data.status != 200) {
+                    $(".reg-ok").hide();
+                    $(".reg-error").text(data.message);
+                    $(".reg-error").show();
+                } else {
+                    $(".reg-ok").text("注册成功wwww!");
+                    $(".reg-ok").show();
+                    location.href = '/user';
+                }
+            },
+            error: function() {
+                $(".reg-error").text("发生了很奇怪的事情");
+                $(".reg-error").show();
             }
         })
     },
