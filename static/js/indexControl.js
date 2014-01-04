@@ -169,7 +169,7 @@ var indexControl = {
                     $('.anime-epi-input').blur(function(){
                     	$(this).addClass('hidden');
                     	$(this).prev().removeClass('hidden');
-                    	if (_this.epiEdit($(this).data().animeid, $(this)[0].value)) {
+                    	if (_this.epiEdit(this.attributes['data-animeid'].nodeValue, $(this)[0].value)) {
                     		$(this).prev().text($(this)[0].value);
                     	} else {
                     		$(this)[0].value=$(this).prev().text();
@@ -177,13 +177,13 @@ var indexControl = {
                     });
                     $(".anime-info").click(function(){
                     	if (this.className == "anime-info unread-sub") {
-                    		if (_this.highlight($(this).data().animeid, 'del')) {
+                    		if (_this.highlight(this.attributes['data-animeid'].nodeValue, 'del')) {
                     			$(this).addClass("read-sub");
                     			$(this).removeClass("unread-sub");
                                 $(".unread-num").text(parseInt($(".unread-num").text())-1);
                     		}
                     	} else {
-                    		if (_this.highlight($(this).data().animeid, 'add')) {
+                    		if (_this.highlight(this.attributes['data-animeid'].nodeValue, 'add')) {
                     			$(this).addClass("unread-sub");
                     			$(this).removeClass("read-sub");
                                 $(".unread-num").text(parseInt($(".unread-num").text())+1);

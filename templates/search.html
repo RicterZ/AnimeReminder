@@ -24,7 +24,7 @@
     $(function() {
         $(".search-button").click(function(){
             indexControl.search($(".search-box")[0].value);
-            console.log($(".search-box")[0].value);
+            //console.log($(".search-box")[0].value);
         });
         indexControl.cookie();
         $(".my-email").text(LittleUrl.decode(indexControl.cookieDict.email));

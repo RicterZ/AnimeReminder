@@ -236,3 +236,21 @@ a.nostyle:hover {
     color: #428bca;
     text-decoration: none;
 }
+
+.intro-container {
+    width: 620px
+}
+
+.poster {
+    display: inline-block;
+    width: 260px;
+    padding: 20px;
+    background: #FFF;
+}
+
+.intro {
+    vertical-align: top;
+    display: inline-block;
+    width: 280px;
+    padding: 20px 20px 20px 0;
+}

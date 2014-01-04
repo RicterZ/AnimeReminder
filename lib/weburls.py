@@ -18,4 +18,5 @@ urls = (
     '/epiedit', 'EpiEditHandler',
     '/exit', 'ExitHandler',
     '/search', 'SearchHandler', 
+    '/data/(\d{5})', 'AnimeHandler',
 )

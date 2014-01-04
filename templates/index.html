@@ -92,9 +92,8 @@
         indexControl.getData('/index', indexControl.indexHander, ".main-update-ul-container");
         indexControl.getData('/get_update_schedule', indexControl.scheduleHandler, ".main-schedule-container");
         $(".button").click(function(){
-            console.log(this.dataset);
-            if (this.dataset.type != 'undo')
-                indexControl[this.dataset.type]();
+            if (this.attributes['data-type'].nodeValue != 'undo')
+                indexControl[this.attributes['data-type'].nodeValue]();
     });});
     </script>
 {% endblock %}
