@@ -31,6 +31,11 @@ a.nostyle:hover {
     margin: 0 20px 0 0;
 }
 
+.my-email:hover {
+    color: #FFF;
+    text-decoration: blink;
+}
+
 .my-main-subscript, .my-main-info {
     width: 80%;
     margin: 30px auto 0 auto;
@@ -100,6 +105,10 @@ a.nostyle:hover {
     margin: 0 1%;
     display: inline-block;
     float: left;
+}
+
+.anime-item:hover .icon {
+    visibility: visible;
 }
 
 .anime-info {
@@ -190,4 +199,40 @@ a.nostyle:hover {
 
 .hidden {
     display: none;
+}
+
+.icon {
+    position: relative;
+    float: right;
+    top: 63px;
+    left: 16px;
+    visibility: hidden;
+    font-weight: 600;
+    width: 30px;
+    height: 30px;
+    margin-top: -20px;
+    font-size: 32px;
+    color: #222;
+    text-align: center;
+    background: #fff;
+    border: 3px solid #000;
+    -webkit-border-radius: 23px;
+    -moz-border-radius: 23px;
+    border-radius: 100%;
+    opacity: .5;
+    filter: alpha(opacity=50);
+    text-decoration: none;
+}
+
+.icon-add {
+    line-height: 26px;
+}
+
+.icon-del {
+    line-height: 32px;  
+}
+
+.icon:hover {
+    color: #428bca;
+    text-decoration: none;
 }

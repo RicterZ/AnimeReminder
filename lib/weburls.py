@@ -14,7 +14,7 @@ urls = (
     '/changepw', 'ChangePasswordHandler',
     '/add_anime', 'AddAnimeHandler',
     '/del_anime', 'DelAnimeHandler',
-    '/highlight', 'WebHighLightHandler',
+    '/highlight', 'HighLightHandler',
     '/epiedit', 'EpiEditHandler',
     '/exit', 'ExitHandler',
     '/search', 'SearchHandler', 

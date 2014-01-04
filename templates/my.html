@@ -3,7 +3,7 @@
 {% block body %}
     <div class="my-header">
         <h1 class="my-header-title"><a class="nostyle" href="/">新番提醒</a></h1>
-        <p class="my-email"></p>
+        <a class="my-email" href="/user"></a>
     </div>
     <div class="my-main">
         <div class="my-main-subscript">
@@ -29,6 +29,7 @@
         emailOption.obj.click(function(){emailOption.click({
             open: function() {return indexControl.emailReminderSet('1');},
             close: function() {return indexControl.emailReminderSet('0');}
-    })})})
+        })});
+    })
     </script>
 {% endblock %}

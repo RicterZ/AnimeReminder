@@ -160,7 +160,7 @@ var indexControl = {
                         var url = data.subscription[i].id.toString().substring(0,2) + '/' + data.subscription[i].id + '/' + data.subscription[i].episode + '_1_115x70.jpg';
                         var read = data.subscription[i].isread==1?" unread-sub":" read-sub";
                         var info = overdic(data.subscription[i].isover, read, data.subscription[i].id);
-                        $('<div class="anime-item"><p class="anime-title">'+info+'<a class="anime-title-a" href="/data'+data.subscription[i].id+'">'+data.subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+data.subscription[i].watch+'</span><input data-animeid="'+data.subscription[i].id+'" value="'+data.subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
+                        $('<div class="anime-item"><a class="icon del-anime icon-del" href="##" data-animeid="'+data.subscription[i].id+'">╳</a><p class="anime-title">'+info+'<a class="anime-title-a" href="/data/'+data.subscription[i].id+'">'+data.subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+data.subscription[i].watch+'</span><input data-animeid="'+data.subscription[i].id+'" value="'+data.subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
                     };
                     $('.watchepi').click(function(){
                     	$(this).addClass('hidden');
@@ -189,6 +189,10 @@ var indexControl = {
                                 $(".unread-num").text(parseInt($(".unread-num").text())+1);
                     		}
                     	}
+                    });
+                    $(".del-anime").click(function(){
+                        if (_this.del(this.attributes['data-animeid'].nodeValue))
+                            $(this).parent().hide();
                     });
                 }
             },
@@ -249,6 +253,7 @@ var indexControl = {
         return bool;
     },
     search: function(keyword){
+        var _this = this;
         $(".subscript-container").html('<img class="load search-load" src="./static/img/01.gif" />');
         $.ajax({
             type: "POST",
@@ -267,8 +272,12 @@ var indexControl = {
                         var url = data[i].id.toString().substring(0,2) + '/' + data[i].id + '/1_1_115x70.jpg';
                         var read = data[i].isread==1?" unread-sub":" read-sub";
                         $(".search-load").hide();
-                        $('<div class="anime-item"><p class="anime-title"><a class="anime-title-a" href="/data/'+data[i].id+'">'+data[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /></div>').appendTo(".subscript-container");
+                        $('<div class="anime-item"><a class="icon add-anime icon-add" href="##" data-animeid="'+data[i].id+'">+</a><p class="anime-title"><a class="anime-title-a" href="/data/'+data[i].id+'">'+data[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /></div>').appendTo(".subscript-container");
                     };
+                    $(".add-anime").click(function(){
+                        if (_this.add(this.attributes['data-animeid'].nodeValue))
+                            $(this).parent().hide();
+                    });
                 }
             },
             error: function() {
@@ -276,22 +285,39 @@ var indexControl = {
             }
         });
     },
-    add: function(){
+    add: function(aid){
         var bool;
         $.ajax({
             type: "GET",
             url: '/add_anime',
-            data: {aid: aid, method: method, hash: Math.random()},
+            data: {aid: aid, hash: Math.random()},
             dataType: "json",
             async: false,
             success: function(data){
                 bool = data.status==200?true:false;
             },
-            error: function() {
+            error: function(){
                 bool = false;
             }
         });
         return bool;
-    }
+    },
+    del: function(aid){
+        var bool;
+        $.ajax({
+            type: "GET",
+            url: '/del_anime',
+            data: {aid: aid, hash: Math.random()},
+            dataType: "json",
+            async: false,
+            success: function(data){
+                bool = data.status==200?true:false;
+            },
+            error: function(){
+                bool = false;
+            }
+        });
+        return bool;
+    },
 }
 
