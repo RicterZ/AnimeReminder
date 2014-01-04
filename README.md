@@ -8,4 +8,3 @@ AnimeReminder
 
 ##新番提醒是免费提供新番提醒服务的平台
 
-Demo: <a href="http://test.ricter.info">目前开发Demo地址</a>
