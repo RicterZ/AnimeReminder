@@ -397,7 +397,22 @@ a.button:hover {
 }
 
 .inline {
-    float: right;
     display: inline-block;
     margin: 0;
+    vertical-align: top;
+}
+
+.pull-right {
+    float: right;
+}
+
+.search-button {
+    float: right;
+    padding: 7px;
+}
+
+.search-box {
+    float: right;
+    font-size: 16px;
+    margin-right: 20px;
 }

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="my-header">
+        <h1 class="my-header-title"><a class="nostyle" href="/">新番提醒</a></h1>
+        <p class="my-email"></p>
+    </div>
+    <div class="my-main">
+        <div class="my-main-subscript">
+            <h1 class="my-main-subscript-title inline">搜索</h1>
+            <a class="button inline search-button" data-type="search" href="##">搜索</a>
+            <input type="text" class="large inline search-box" name="keyword" placeholder="请输入关键词wwww" />
+        </div>
+        <div class="my-main-subscript">
+            <div class="subscript-container">
+            </div>
+        </div>
+        <div class="hr-line"></div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+    $(function() {
+        $(".search-button").click(function(){
+            indexControl.search($(".search-box")[0].value);
+            console.log($(".search-box")[0].value);
+        });
+        indexControl.cookie();
+        $(".my-email").text(LittleUrl.decode(indexControl.cookieDict.email));
+    })
+    </script>
+{% endblock %}

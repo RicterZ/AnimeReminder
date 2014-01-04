@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }} | 新番提醒 | Anime Reminder | 第三方免费动漫更新提醒</title>
+    <link href="./static/css/style.css" rel="stylesheet">
+    <link href="./static/css/my.css" rel="stylesheet">
+</head>
+
+<body>
+    {% block body %}
+    {% endblock %}
+    <div class="footer">
+        <p class="copyright">
+            Copyright ©2013 <a href="http://ricter.info">Ricter</a> Powered By
+            <a href="http://github.com/RicterZ/AnimeReminder">新番提醒</a> |
+            <a href="/devtimeline">更新时间线</a> |
+            <a href="https://gist.github.com/RicterZ/8134886">API 3.0</a> |
+            <a href="/disclaimer">免责声明</a>
+        </p>
+    </div>
+</body>
+<script src="./static/js/jquery.js"></script>
+<script src="./static/js/indexControl.js"></script>
+<script src="./static/js/global.js"></script>
+{% block script %}
+{% endblock %}
+</html>

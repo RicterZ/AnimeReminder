@@ -1,22 +1,15 @@
-from lib.handlers.BaseHandler import *
-from lib.handlers.IndexHandler import *
-from lib.handlers.UserHandler import *
-from lib.handlers.SubScriptionHandler import *
-from lib.handlers.DataHandler import *
-from lib.handlers.HighlightHandler import *
-from lib.handlers.ScheduleHandler import *
-from lib.handlers.PageHandler import *
-from lib.handlers.SearchHandler import *
+from lib.handlers.common import *
+from lib.handlers.web import *
 
 urls = (
     '/', 'IndexPage',
     '/user', 'UserPage',
-    '/index', 'IndexHandler',
+    '/index', 'IndexDataHandler',
     '/check', 'CheckHandler',
     '/login', 'LoginHandler',
     '/reg', 'RegHandler',
-    '/my', 'WebGetUserInfoHandler',
-    '/email_reminder_set', 'WebEmailStatusSetHandler',
+    '/my', 'GetUserInfoHandler',
+    '/email_reminder_set', 'EmailStatusSetHandler',
     '/get_update_schedule', 'ScheduleGetHandler',
     '/changepw', 'ChangePasswordHandler',
     '/add_anime', 'AddAnimeHandler',

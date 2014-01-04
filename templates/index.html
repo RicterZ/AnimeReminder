@@ -1,28 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>新番提醒 | Anime Reminder | 第三方免费动漫更新提醒</title>
-    <link href="./static/css/style.css" rel="stylesheet">
-    <script src="./static/js/jquery.js"></script>
-    <script src="./static/js/carousel.js"></script>
-    <script src="./static/js/indexControl.js"></script>
-    <script src="./static/js/global.js"></script>
-    <script>
-    $$(function(){
-        indexControl.__init__();
-        indexControl.getData('/index', indexControl.indexHander, ".main-update-ul-container");
-        indexControl.getData('/get_update_schedule', indexControl.scheduleHandler, ".main-schedule-container");
-        $$(".button").click(function(){
-            console.log(this.dataset);
-            if (this.dataset.type != 'undo')
-                indexControl[this.dataset.type]();
-        });
-    });
-    </script>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block body %}
     <div class="header">
         <img class="header-img" src="./static/img/2013-12-29.jpg">
     </div>
@@ -104,19 +82,19 @@
         </div>
         <div class="hr-line"></div>
     </div>
-    <div class="footer">
-        <p class="copyright">
-            Copyright ©2013 
-            <a href="http://ricter.info">Ricter</a>
-            Powered By
-            <a href="http://github.com/RicterZ/AnimeReminder">新番提醒</a>
-            |
-            <a href="/devtimeline">更新时间线</a>
-            |
-            <a href="https://gist.github.com/RicterZ/8134886">API 3.0</a>
-            |
-            <a href="/disclaimer">免责声明</a>
-        </p>
-    </div>
-</body>
-</html>
+{% endblock %}
+
+{% block script %}
+    <script src="./static/js/carousel.js"></script>
+    <script>
+    $(function(){
+        indexControl.__init__();
+        indexControl.getData('/index', indexControl.indexHander, ".main-update-ul-container");
+        indexControl.getData('/get_update_schedule', indexControl.scheduleHandler, ".main-schedule-container");
+        $(".button").click(function(){
+            console.log(this.dataset);
+            if (this.dataset.type != 'undo')
+                indexControl[this.dataset.type]();
+    });});
+    </script>
+{% endblock %}

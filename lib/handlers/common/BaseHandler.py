@@ -4,7 +4,8 @@ from lib.settings import *
 class BaseHandler:
     def inputClean(self, inputData):
         return inputData.replace("'", '').replace('"', '').replace('\\', '')\
-                        .replace('/', '').replace('?', '').replace(' ', '')
+                        .replace('/', '').replace('?', '').replace(' ', '')\
+                        .replace('>', '').replace('<', '')
 
     def pwToMD5(self, pwstr):
         h = hashlib.md5()
@@ -43,9 +44,6 @@ class APIBaseHandler(BaseHandler):
         web.header('Content-type', "application/json; charset=utf-8")
 
 
-
-
-
 class WebBaseHandler(BaseHandler):
 
     def __init__(self):
@@ -69,3 +67,6 @@ class WebBaseHandler(BaseHandler):
             self.updateNum = 0
             self.uid       = 0
         web.header('Content-type', "application/json; charset=utf-8")
+
+    def render(self, templatefile, title = '', **kwargs):
+        return env.get_template(templatefile).render(title=title,**kwargs)

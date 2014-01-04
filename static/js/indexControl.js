@@ -62,7 +62,7 @@ var indexControl = {
                     j = 1;
                 var m = updateData[i].animeid;
                 var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+updateData[i].episode+'_1_115x70.jpg';
-                $('<li class="main-update-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a target="_black" href="'+animeUrl+updateData[i].animeid+'">'+updateData[i].name+'</a></p><p class="update-title">更新到 <span class="episode">'+updateData[i].episode+'</span> 集</p></li>').appendTo(ul[j]);
+                $('<li class="main-update-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a href="/data/'+updateData[i].animeid+'">'+updateData[i].name+'</a></p><p class="update-title">更新到 <span class="episode">'+updateData[i].episode+'</span> 集</p></li>').appendTo(ul[j]);
             };
         };
         $(".update-load").hide();
@@ -74,7 +74,7 @@ var indexControl = {
             for (var i=0;i<updateData.length;i++) {
                 var m = updateData[i].url.split('/')[4];
                 var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+'1_1_115x70.jpg';
-                $('<li class="update-schedule-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a target="_black" href="'+updateData[i].url+'">'+updateData[i].name+'</a></p><p class="update-title">'+updateData[i].time+' 更新</p></li>').appendTo($(".update-schdele-container")[updateData[i].week]);
+                $('<li class="update-schedule-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a href="/data/'+updateData[i].url.substr(35)+'">'+updateData[i].name+'</a></p><p class="update-title">'+updateData[i].time+' 更新</p></li>').appendTo($(".update-schdele-container")[updateData[i].week]);
             }
         }
         $(".weekday").show();
@@ -134,7 +134,6 @@ var indexControl = {
     myHandler: function() {
         var _this = this;
         var imgurl = 'http://images.movie.xunlei.com/submovie_img/';
-        var animeUrl = 'http://data.movie.kankan.com/movie/';
         var overdic = function(status, read, aid) {
             return status==1?'<span class="anime-info'+read+'" data-animeid="'+aid+'">已完结</span>':'<span class="anime-info'+read+'" data-animeid="'+aid+'">更新中</span>'
         };
@@ -153,6 +152,7 @@ var indexControl = {
                 if (data.status != 200) {
                     $(".subscript-container").text(data.message);
                 } else {
+                    $(".my-load").hide();
                     var data = data.data;
                     $(".unread-num").text(data.unread);
                     $(".button-option").addClass(emailDiic[data.email]);
@@ -160,7 +160,7 @@ var indexControl = {
                         var url = data.subscription[i].id.toString().substring(0,2) + '/' + data.subscription[i].id + '/' + data.subscription[i].episode + '_1_115x70.jpg';
                         var read = data.subscription[i].isread==1?" unread-sub":" read-sub";
                         var info = overdic(data.subscription[i].isover, read, data.subscription[i].id);
-                        $('<div class="anime-item"><p class="anime-title">'+info+'<a class="anime-title-a" target="_black" href="'+animeUrl+data.subscription[i].id+'">'+data.subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+data.subscription[i].watch+'</span><input data-animeid="'+data.subscription[i].id+'" value="'+data.subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
+                        $('<div class="anime-item"><p class="anime-title">'+info+'<a class="anime-title-a" href="/data'+data.subscription[i].id+'">'+data.subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+data.subscription[i].watch+'</span><input data-animeid="'+data.subscription[i].id+'" value="'+data.subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
                     };
                     $('.watchepi').click(function(){
                     	$(this).addClass('hidden');
@@ -248,5 +248,50 @@ var indexControl = {
         });
         return bool;
     },
+    search: function(keyword){
+        $(".subscript-container").html('<img class="load search-load" src="./static/img/01.gif" />');
+        $.ajax({
+            type: "POST",
+            url: '/search',
+            data: {keyword: keyword, hash: Math.random()},
+            dataType: "json",
+            async: true,
+            success: function(data){
+                var imgurl = 'http://images.movie.xunlei.com/submovie_img/';
+                if (data.status != 200) {
+                    $(".subscript-container").text(data.message);
+                } else {
+                    var data = data.data;
+                    //console.log(data);
+                    for (var i=0;i<data.length;i++) {
+                        var url = data[i].id.toString().substring(0,2) + '/' + data[i].id + '/1_1_115x70.jpg';
+                        var read = data[i].isread==1?" unread-sub":" read-sub";
+                        $(".search-load").hide();
+                        $('<div class="anime-item"><p class="anime-title"><a class="anime-title-a" href="/data/'+data[i].id+'">'+data[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /></div>').appendTo(".subscript-container");
+                    };
+                }
+            },
+            error: function() {
+                bool = false;
+            }
+        });
+    },
+    add: function(){
+        var bool;
+        $.ajax({
+            type: "GET",
+            url: '/add_anime',
+            data: {aid: aid, method: method, hash: Math.random()},
+            dataType: "json",
+            async: false,
+            success: function(data){
+                bool = data.status==200?true:false;
+            },
+            error: function() {
+                bool = false;
+            }
+        });
+        return bool;
+    }
 }
 
