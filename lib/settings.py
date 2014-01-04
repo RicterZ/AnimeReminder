@@ -18,6 +18,6 @@ db = web.database(
     host = 'ricter.info',
     dbn  = 'mysql',
     db   = 'ricter_newanime', 
-    user = 'ricter', 
-    pw   = 'CanyueROOTSmile'
+    user = '', 
+    pw   = ''
 )
