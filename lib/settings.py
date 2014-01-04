@@ -19,5 +19,5 @@ db = web.database(
     dbn  = 'mysql',
     db   = 'ricter_newanime', 
     user = 'ricter', 
-    pw   = 'CanyueROOTSmile'
+    pw   = ''
 )
