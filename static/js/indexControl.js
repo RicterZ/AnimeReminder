@@ -82,7 +82,8 @@ var indexControl = {
     },
     loginHandler: function() {
         $(".login-error").hide();
-        $(".login-ok").hide();
+        $(".login-ok").text("正在登录~");
+        $(".login-ok").show();
         var loginUrl = '/login';
         if ($(".login")[0][0].value == "" || $(".login")[0][1].value == "") {
             $(".login-error").text("要填上邮箱和密码0.0");
