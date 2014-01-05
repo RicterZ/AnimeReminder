@@ -11,11 +11,14 @@ class SearchHandler(WebBaseHandler):
         keyword = web.input(keyword='').keyword
         if keyword:
             s = AnimeDataGetter()
-            return returnData(
-                data=[{
+            result = s.animeSearch(keyword.encode('gbk'))
+            if result:
+            	return returnData(
+                	data=[{
                     'id': animeItem[1],
                     'name': animeItem[0].decode('utf-8'),
-                } for animeItem in s.animeSearch(keyword.encode('gbk'))]
-            )
+                } for animeItem in result])
+            else:
+            	return returnData(500, SearchErrorMessage)
         else:
             return returnData(500, DataErrorMessage)

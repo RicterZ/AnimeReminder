@@ -25,10 +25,17 @@
     <script>
     $(function() {
         indexControl.myHandlerCheck();
+        indexControl.myHandler();
         var emailOption = new OptionButton($("#email"));
         emailOption.obj.click(function(){emailOption.click({
-            open: function() {return indexControl.emailReminderSet('1');},
-            close: function() {return indexControl.emailReminderSet('0');}
+            open: function() {
+                localStorage.setItem("email", 1);
+                return indexControl.emailReminderSet('1');
+            },
+            close: function() {
+                localStorage.setItem("email", 0);
+                return indexControl.emailReminderSet('0');
+            }
         })});
     })
     </script>

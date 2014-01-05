@@ -11,13 +11,13 @@ import zipfile, datetime
 from lib.anime import AnimeDataGetter
 from lib.error import *
 
-web.config.debug = True
+web.config.debug = False
 env = jj.Environment(loader = jj.FileSystemLoader('templates'))
 
 db = web.database(
     host = 'ricter.info',
     dbn  = 'mysql',
     db   = 'ricter_newanime', 
-    user = '', 
-    pw   = ''
+    user = 'ricter', 
+    pw   = 'CanyueROOTSmile'
 )

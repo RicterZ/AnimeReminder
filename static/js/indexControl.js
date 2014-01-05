@@ -2,6 +2,7 @@ var indexControl = {
     _this: this,
     returnData: {},
     cookieDict: {id: '', session: '', email: ''},
+    imgurl: 'http://images.movie.xunlei.com/submovie_img/',
     __init__: function() {
         this.cookie();
         var _this = this;
@@ -61,7 +62,7 @@ var indexControl = {
                 if (i == updateData.length / 2) 
                     j = 1;
                 var m = updateData[i].animeid;
-                var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+updateData[i].episode+'_1_115x70.jpg';
+                var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+updateData[i].episode+'_1_150x85.jpg';
                 $('<li class="main-update-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a href="/data/'+updateData[i].animeid+'">'+updateData[i].name+'</a></p><p class="update-title">更新到 <span class="episode">'+updateData[i].episode+'</span> 集</p></li>').appendTo(ul[j]);
             };
         };
@@ -73,7 +74,7 @@ var indexControl = {
         if (updateData) {
             for (var i=0;i<updateData.length;i++) {
                 var m = updateData[i].url.split('/')[4];
-                var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+'1_1_115x70.jpg';
+                var url = animeImageUrl+m[0]+m[1]+'/'+m+'/'+'1_1_150x85.jpg';
                 $('<li class="update-schedule-item"><img class="update-img" src="'+url+'" onerror=this.src="./static/img/ar.jpg" /><p class="update-title"><a href="/data/'+updateData[i].url.substr(35)+'">'+updateData[i].name+'</a></p><p class="update-title">'+updateData[i].time+' 更新</p></li>').appendTo($(".update-schdele-container")[updateData[i].week]);
             }
         }
@@ -154,7 +155,7 @@ var indexControl = {
     },
     myHandlerCheck: function() {
         var _this = this;
-        _this.cookie();
+        this.cookie();
         $.ajax({
             type: "POST",
             url: '/check',
@@ -165,7 +166,23 @@ var indexControl = {
                 if (data.status != 200) {
                     location.href = '/';
                 } else {
-                    _this.myHandler();
+                    _this.getUserData(function(data){
+                        console.log(data);
+                        if (localStorage.getItem("email") != data.data.email) {
+                            console.log('e');
+                            localStorage.setItem("email", data.data.email);
+                        };
+                        if (localStorage.getItem("unread") != data.data.unread) {
+                            console.log('u');
+                            localStorage.setItem("unread", data.data.unread);
+                        };
+                        if (localStorage.getItem("subscription") != JSON.stringify(data.data.subscription)) {
+                            console.log('s');
+                            localStorage.setItem("subscription", JSON.stringify(data.data.subscription));
+                        };
+                        _this.userSetData();
+                        $(".my-load").hide();
+                    });
                 }
             },
             error: function() {
@@ -173,17 +190,7 @@ var indexControl = {
             }
         })
     },
-    myHandler: function() {
-        var _this = this;
-        var imgurl = 'http://images.movie.xunlei.com/submovie_img/';
-        var overdic = function(status, read, aid) {
-            return status==1?'<span class="anime-info'+read+'" data-animeid="'+aid+'">已完结</span>':'<span class="anime-info'+read+'" data-animeid="'+aid+'">更新中</span>'
-        };
-        var emailDiic = {
-            0: 'close',
-            1: 'open',
-        } 
-        $(".my-email").text(LittleUrl.decode(_this.cookieDict.email));
+    getUserData: function(callback, needSet){
         $.ajax({
             type: "GET",
             url: '/my',
@@ -194,52 +201,77 @@ var indexControl = {
                 if (data.status != 200) {
                     $(".subscript-container").text(data.message);
                 } else {
-                    $(".my-load").hide();
-                    var data = data.data;
-                    $(".unread-num").text(data.unread);
-                    $(".button-option").addClass(emailDiic[data.email]);
-                    for (var i=0;i<data.subscription.length;i++) {
-                        var url = data.subscription[i].id.toString().substring(0,2) + '/' + data.subscription[i].id + '/' + data.subscription[i].episode + '_1_115x70.jpg';
-                        var read = data.subscription[i].isread==1?" unread-sub":" read-sub";
-                        var info = overdic(data.subscription[i].isover, read, data.subscription[i].id);
-                        $('<div class="anime-item"><a class="icon del-anime icon-del" href="##" data-animeid="'+data.subscription[i].id+'">╳</a><p class="anime-title">'+info+'<a class="anime-title-a" href="/data/'+data.subscription[i].id+'">'+data.subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /><p class="anime-epi">更新到 '+data.subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+data.subscription[i].watch+'</span><input data-animeid="'+data.subscription[i].id+'" value="'+data.subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
+                    if (needSet) {
+                        localStorage.setItem("subscription", JSON.stringify(data.data.subscription));
+                        localStorage.setItem("email", data.data.email);
+                        localStorage.setItem("unread", data.data.unread);
                     };
-                    $('.watchepi').click(function(){
-                    	$(this).addClass('hidden');
-                    	$(this).next().removeClass('hidden');
-                    });
-                    $('.anime-epi-input').blur(function(){
-                    	$(this).addClass('hidden');
-                    	$(this).prev().removeClass('hidden');
-                    	if (_this.epiEdit(this.attributes['data-animeid'].nodeValue, $(this)[0].value)) {
-                    		$(this).prev().text($(this)[0].value);
-                    	} else {
-                    		$(this)[0].value=$(this).prev().text();
-                    	}
-                    });
-                    $(".anime-info").click(function(){
-                    	if (this.className == "anime-info unread-sub") {
-                    		if (_this.highlight(this.attributes['data-animeid'].nodeValue, 'del')) {
-                    			$(this).addClass("read-sub");
-                    			$(this).removeClass("unread-sub");
-                                $(".unread-num").text(parseInt($(".unread-num").text())-1);
-                    		}
-                    	} else {
-                    		if (_this.highlight(this.attributes['data-animeid'].nodeValue, 'add')) {
-                    			$(this).addClass("unread-sub");
-                    			$(this).removeClass("read-sub");
-                                $(".unread-num").text(parseInt($(".unread-num").text())+1);
-                    		}
-                    	}
-                    });
-                    $(".del-anime").click(function(){
-                        if (_this.del(this.attributes['data-animeid'].nodeValue))
-                            $(this).parent().hide();
-                    });
+                    callback(data);
                 }
             },
             error: function() {
                 $(".subscript-container").text("可能是服务器抽了Q^q");
+            }
+        });
+    },
+    myHandler: function() {
+        if (localStorage.getItem("subscription")==null || localStorage.getItem("subscription")==undefined) {
+            this.getUserData(this.userSetData, true);
+        } else {
+            this.userSetData();
+        }
+    },
+    userSetData: function(){
+        $(".subscript-container").html('<img class="load my-load" src="./static/img/01.gif" />');
+        var _this = this,
+            emailDic = {0: 'close', 1: 'open'},
+            email = LittleUrl.decode(_this.cookieDict.email),
+            overdic = function(status, read, aid) {
+                return status==1?'<span class="anime-info'+read+'" data-animeid="'+aid+'">已完结</span>':'<span class="anime-info'+read+'" data-animeid="'+aid+'">更新中</span>'};
+        $(".my-email").text(email);
+        eval('var subscription = ' + localStorage.getItem("subscription"));
+        $(".unread-num").text(localStorage.getItem("unread"));
+        $(".button-option").addClass(emailDic[localStorage.getItem("email")]);
+        for (var i=0;i<subscription.length;i++) {
+            var url = subscription[i].id.toString().substring(0,2) + '/' + subscription[i].id + '/' + subscription[i].episode + '_1_150x85.jpg';
+            var read = subscription[i].isread==1?" unread-sub":" read-sub";
+            var info = overdic(subscription[i].isover, read, subscription[i].id);
+            $('<div class="anime-item"><a class="icon del-anime icon-del" href="##" data-animeid="'+subscription[i].id+'">╳</a><p class="anime-title">'+info+'<a class="anime-title-a" href="/data/'+subscription[i].id+'">'+subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+_this.imgurl+url+'" /><p class="anime-epi">更新到 '+subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+subscription[i].watch+'</span><input data-animeid="'+subscription[i].id+'" value="'+subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
+        };
+        $(".watchepi").click(function(){
+            $(this).addClass('hidden');
+            $(this).next().removeClass('hidden');
+        });
+        $(".anime-epi-input").blur(function(){
+            $(this).addClass('hidden');
+            $(this).prev().removeClass('hidden');
+            if (_this.epiEdit(this.attributes['data-animeid'].nodeValue, $(this)[0].value)) {
+                $(this).prev().text($(this)[0].value);
+            } else {
+                $(this)[0].value=$(this).prev().text();
+            }
+        });
+        $(".anime-info").click(function(){
+        if (this.className == "anime-info unread-sub") {
+            if (_this.highlight(this.attributes['data-animeid'].nodeValue, 'del')) {
+                    $(this).addClass("read-sub");
+                    $(this).removeClass("unread-sub");
+                    $(".unread-num").text(parseInt($(".unread-num").text())-1);
+                    localStorage.setItem("unread", parseInt($(".unread-num").text()));
+                }
+            } else {
+                if (_this.highlight(this.attributes['data-animeid'].nodeValue, 'add')) {
+                    $(this).addClass("unread-sub");
+                    $(this).removeClass("read-sub");
+                    $(".unread-num").text(parseInt($(".unread-num").text())+1);
+                    localStorage.setItem("unread", parseInt($(".unread-num").text()));
+                }
+            }
+        });
+        $(".del-anime").click(function(){
+            if (_this.del(this.attributes['data-animeid'].nodeValue)) {
+                localStorage.removeItem("subscription");
+                $(this).parent().hide();
             }
         });
     },
@@ -304,17 +336,16 @@ var indexControl = {
             dataType: "json",
             async: true,
             success: function(data){
-                var imgurl = 'http://images.movie.xunlei.com/submovie_img/';
                 if (data.status != 200) {
                     $(".subscript-container").text(data.message);
                 } else {
                     var data = data.data;
                     //console.log(data);
                     for (var i=0;i<data.length;i++) {
-                        var url = data[i].id.toString().substring(0,2) + '/' + data[i].id + '/1_1_115x70.jpg';
+                        var url = data[i].id.toString().substring(0,2) + '/' + data[i].id + '/1_1_150x85.jpg';
                         var read = data[i].isread==1?" unread-sub":" read-sub";
                         $(".search-load").hide();
-                        $('<div class="anime-item"><a class="icon add-anime icon-add" href="##" data-animeid="'+data[i].id+'">+</a><p class="anime-title"><a class="anime-title-a" href="/data/'+data[i].id+'">'+data[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+imgurl+url+'" /></div>').appendTo(".subscript-container");
+                        $('<div class="anime-item"><a class="icon add-anime icon-add" href="##" data-animeid="'+data[i].id+'">+</a><p class="anime-title"><a class="anime-title-a" href="/data/'+data[i].id+'">'+data[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+_this.imgurl+url+'" /></div>').appendTo(".subscript-container");
                     };
                     $(".add-anime").click(function(){
                         if (_this.add(this.attributes['data-animeid'].nodeValue))
@@ -360,6 +391,5 @@ var indexControl = {
             }
         });
         return bool;
-    },
+    }
 }
-

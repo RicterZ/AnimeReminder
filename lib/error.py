@@ -16,6 +16,7 @@ AddRepateMessage      = '请不要重复添加'
 AnimeErrorMessage     = '订阅不在您的订阅列表里'
 EpisodeErrorMessage   = '集数不符合规范'
 DataErrorMessage      = '数据错误'
+SearchErrorMessage    = '搜索的内容未找到'
 
 def returnData(status=200, message="", data=[]):
     return json.dumps({
