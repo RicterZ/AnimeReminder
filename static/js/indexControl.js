@@ -71,6 +71,7 @@ var indexControl = {
     },
     scheduleHandler: function(updateData) {
         var animeImageUrl = 'http://images.movie.xunlei.com/submovie_img/';
+        updateData = updateData.update_list;
         if (updateData) {
             for (var i=0;i<updateData.length;i++) {
                 var m = updateData[i].url.split('/')[4];

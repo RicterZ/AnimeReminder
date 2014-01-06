@@ -41,4 +41,4 @@ class ScheduleGetHandler():
         except:
             return returnData(500, ScheduleErrorMessage)
         else:
-            return returnData(data=animelist)
+            return returnData(data={"update_list": animelist})
