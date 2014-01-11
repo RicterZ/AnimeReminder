@@ -6,7 +6,7 @@ urls = (
     '/reg', 'RegHandler',
     '/get_user_info', 'GetUserInfoHandler',
     '/email_reminder_set', 'EmailStatusSetHandler',
-    '/get_update_schedule', 'ScheduleGetHandler',
+    '/get_update_schedule', 'ScheduleGetHandlerV2',
     '/changepw', 'ChangePasswordHandler',
     '/add_anime', 'AddAnimeHandler',
     '/del_anime', 'DelAnimeHandler',

@@ -3,7 +3,8 @@ from lib.anime import AnimeDataGetter
 from lib.error import *
 from lib.settings import *
 
-class ScheduleGetHandler():
+
+class ScheduleBase():
     weekDict = {
         '0': 'SUN',
         '1': 'MON',
@@ -14,6 +15,7 @@ class ScheduleGetHandler():
         '6': 'SAT',
     }
 
+class ScheduleGetHandler(ScheduleBase):
     def GET(self):
         """说明：这个渣渣正则我回头再写好了=-="""
         web.header('Content-type', "application/json; charset=utf-8")
@@ -42,3 +44,22 @@ class ScheduleGetHandler():
             return returnData(500, ScheduleErrorMessage)
         else:
             return returnData(data={"update_list": animelist})
+
+
+class ScheduleGetHandlerV2(ScheduleBase):
+    def GET(self):
+        web.header('Content-type', "application/json; charset=utf-8")
+        anime = AnimeDataGetter()
+        url = 'http://anime.kankan.com/'
+        reqdata = anime.getURL(url)
+        animelist = []
+        updatelist = re.compile(r'updatelist_week_data\[[\d]+\] = \{(.*)\}')
+        for updateitem in updatelist.findall(reqdata):
+            updatejson = json.loads('{'+updateitem+'}')
+            animelist.append({
+                "week": updatejson["day_id"],
+                "time": updatejson["schedule"].split(' ')[1],
+                "url": updatejson["link"],
+                "name": updatejson["title"],
+            })
+        return returnData(data={"update_list": animelist})
