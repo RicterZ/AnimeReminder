@@ -5,13 +5,13 @@ class LoginHandler(WebBaseHandler):
     def POST(self):
         webinput = web.input(u='',p='')
         email, password = self.inputClean(webinput.u), self.pwToMD5(webinput.p)
-        if not email or not password: return returnData(500, UnknowErrorMessage)
+        if not email or not password: return returnData(UnknowErrorMessage)
         userData = db.select('user', where="email='%s'"%email, what="password,id")
         if userData:
             userData = userData[0] 
         else:
-            return returnData(500, LoginErrorMessage)
-        if not password == userData.password: return returnData(500, LoginErrorMessage)
+            return returnData(LoginErrorMessage)
+        if not password == userData.password: return returnData(LoginErrorMessage)
         key = self.makeKey()
         db.update('user', where="id=%d"%userData.id, session=key)
         web.setcookie('id', userData.id, 10000000)
@@ -24,13 +24,13 @@ class RegHandler(WebBaseHandler):
     def POST(self):
         webinput = web.input(u='',p='')
         email, password = self.inputClean(webinput.u), webinput.p
-        if not (email or password): return returnData(500, UnknowErrorMessage)
+        if not (email or password): return returnData(UnknowErrorMessage)
         if len(webinput.p) < 6 or len(webinput.p) > 16:
-            return returnData(500, PasswordFormatMessage)
+            return returnData(PasswordFormatMessage)
         password = self.pwToMD5(web.input().p)
-        if not self.checkEmail(email): return returnData(500, EmailErrorMessage)
+        if not self.checkEmail(email): return returnData(EmailErrorMessage)
         data = db.select('user', where="email='%s'"%email)
-        if not len(data) == 0: return returnData(500, EmailExistMessage)
+        if not len(data) == 0: return returnData(EmailExistMessage)
 
         key = self.makeKey()
         data = db.insert('user',email=email,password=password,emailid='0',session=key)
@@ -45,13 +45,13 @@ class CheckHandler(WebBaseHandler):
     def POST(self):
         webinput = web.input(id='',session='')
         uid, session = self.inputClean(webinput.id), self.inputClean(webinput.session)
-        if not uid or not session: return returnData(500, UnknowErrorMessage)
+        if not uid or not session: return returnData(UnknowErrorMessage)
         userData = db.select('user', where="id=%s"%uid, what="session")
         if userData:
             userData = userData[0] 
         else:
-            return returnData(500, LoginErrorMessage)
-        if not session == userData.session: return returnData(500, LoginErrorMessage)
+            return returnData(LoginErrorMessage)
+        if not session == userData.session: return returnData(LoginErrorMessage)
         return returnData()
 
 

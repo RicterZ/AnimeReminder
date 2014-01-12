@@ -41,7 +41,7 @@ class ScheduleGetHandler(ScheduleBase):
                         "name": name.findall(data)[0].strip('">').split('<')[0]
                     })
         except:
-            return returnData(500, ScheduleErrorMessage)
+            return returnData(ScheduleErrorMessage)
         else:
             return returnData(data={"update_list": animelist})
 

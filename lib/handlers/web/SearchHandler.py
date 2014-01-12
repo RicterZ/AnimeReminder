@@ -19,6 +19,6 @@ class SearchHandler(WebBaseHandler):
                     'name': animeItem[0].decode('utf-8'),
                 } for animeItem in result])
             else:
-            	return returnData(500, SearchErrorMessage)
+            	return returnData(SearchErrorMessage)
         else:
-            return returnData(500, DataErrorMessage)
+            return returnData(DataErrorMessage)
