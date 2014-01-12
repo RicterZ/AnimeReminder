@@ -18,4 +18,3 @@ class IndexDataHandler(WebBaseHandler):
             "message": "",
             "data": animeList
         })
-
