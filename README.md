@@ -8,3 +8,19 @@ AnimeReminder
 
 ##新番提醒是免费提供新番提醒服务的平台
 
+##ToDo
+
+RSS for each user.   
+
+###weburls.py
+
+    urls = (
+        '/user/[\d]+.xml', 'RSSHandler'
+    )
+    
+###Handlers/RSSHandler.py
+
+    class RSSHandler:
+        #do something
+        
+欢迎贡献代码
