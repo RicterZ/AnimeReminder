@@ -8,6 +8,7 @@ urls = (
     '/check', 'CheckHandler',
     '/login', 'LoginHandler',
     '/reg', 'RegHandler',
+    '/rss/([\d]+).xml', 'RSSHandler',
     '/my', 'GetUserInfoHandler',
     '/email_reminder_set', 'EmailStatusSetHandler',
     '/get_update_schedule', 'ScheduleGetHandler',

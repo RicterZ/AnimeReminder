@@ -16,11 +16,11 @@ class AnimeDataGetter(object):
     imovieid = re.compile(r'imovieid=\d*')
 
     def __init__(self):
-       self.AnimeTitle    = ''
-       self.AnimePoster   = ''
-       self.AnimeIntro    = ''
-       self.AnimeEpiCount = ''
-       self.AnimeIsOver   = '0'
+        self.AnimeTitle    = ''
+        self.AnimePoster   = ''
+        self.AnimeIntro    = ''
+        self.AnimeEpiCount = ''
+        self.AnimeIsOver   = '0'
 
     def getURL(self, url):
         """

@@ -3,7 +3,7 @@ from lib.settings import *
 
 class GetUserInfoHandler(WebBaseHandler):
     def GET(self):
-        if not self.isLogin: return returnData(KeyErrorMessage)
+        if not self.isLogin: return returnData(500, KeyErrorMessage)
         dataList = []
         for i in range(0, len(self.animelist)):
             animeData = db.select(
@@ -27,7 +27,7 @@ class GetUserInfoHandler(WebBaseHandler):
 
 class EmailStatusSetHandler(WebBaseHandler):
     def GET(self):
-        if not self.isLogin: return returnData(KeyErrorMessage)
+        if not self.isLogin: return returnData(500, KeyErrorMessage)
         enable = web.input(enable='0').enable
         if not enable == '1':enable = '0'
         db.update('user', where="id=%d"%self.uid, isremind=enable)

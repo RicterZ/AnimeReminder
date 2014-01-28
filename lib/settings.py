@@ -15,9 +15,9 @@ web.config.debug = False
 env = jj.Environment(loader = jj.FileSystemLoader('templates'))
 
 db = web.database(
-    host = 'ricter.info',
+    host = 'faceair.net',
     dbn  = 'mysql',
-    db   = '', 
-    user = '', 
-    pw   = ''
+    db   = 'ricter_newanime', 
+    user = 'ricter', 
+    pw   = 'Canyue123'
 )

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+<title>Anime Reminder</title>
+<link href="http://anime.ricter.info" />
+{% for anime in data %}
+<item>
+    <title>{{ anime.name }}</title>
+    <link>http://anime.ricter.info/data/{{ anime.id }}</link>
+    <description>Update to {{ anime.episode }}</description>
+</item>
+{% endfor %}
+</feed>

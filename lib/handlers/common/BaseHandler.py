@@ -69,4 +69,4 @@ class WebBaseHandler(BaseHandler):
         web.header('Content-type', "application/json; charset=utf-8")
 
     def render(self, templatefile, title = '', **kwargs):
-        return env.get_template(templatefile).render(title=title,**kwargs)
+       return env.get_template(templatefile).render(title=title,**kwargs)
