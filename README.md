@@ -9,6 +9,7 @@ AnimeReminder
 
 ##新番提醒是免费提供新番提醒服务的平台
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     AR_INDEX.py          //第二次重构    
     AR_UPDATE.py         //未重构   
@@ -20,3 +21,8 @@ AnimeReminder
     
 欢迎贡献代码
 >>>>>>> 320ddcb6ebceb473ebfd6d76c60336e386d437fd
+=======
+    
+欢迎贡献代码
+ 
+>>>>>>> 77e779dedf162696d4d86f703dc70bb7c91695ce
