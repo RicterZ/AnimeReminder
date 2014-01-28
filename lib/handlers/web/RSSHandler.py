@@ -1,4 +1,5 @@
 __author__ = 'Ricter'
+from lib.handlers.common.BaseHandler import WebBaseHandler
 from lib.settings import *
 
 

@@ -11,7 +11,7 @@ class IndexPage(WebBaseHandler):
 class UserPage(WebBaseHandler):
     def GET(self):
         web.header('Content-type', "text/html; charset=utf-8")
-        return self.render('my.html', title = '我'.decode('utf-8'))
+        return self.render('my.html', title = '我'.decode('utf-8'), user_id=self.uid)
 
 class AnimeHandler(WebBaseHandler):
     def GET(self, aid):
