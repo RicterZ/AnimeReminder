@@ -237,7 +237,7 @@ var indexControl = {
             var url = subscription[i].id.toString().substring(0,2) + '/' + subscription[i].id + '/' + subscription[i].episode + '_1_150x85.jpg';
             var read = subscription[i].isread==1?" unread-sub":" read-sub";
             var info = overdic(subscription[i].isover, read, subscription[i].id);
-            $('<div class="anime-item"><a class="icon del-anime icon-del" href="##" data-animeid="'+subscription[i].id+'">╳</a><p class="anime-title">'+info+'<a class="anime-title-a" href="/data/'+subscription[i].id+'">'+subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+_this.imgurl+url+'" /><p class="anime-epi">更新到 '+subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+subscription[i].watch+'</span><input data-animeid="'+subscription[i].id+'" value="'+subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
+            $('<div class="anime-item"><a class="icon del-anime icon-del" href="##" data-animeid="'+subscription[i].id+'">╳</a><p class="anime-title">'+info+'<a target="_blank" class="anime-title-a" href="http://data.movie.kankan.com/movie/'+subscription[i].id+'">'+subscription[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+_this.imgurl+url+'" /><p class="anime-epi">更新到 '+subscription[i].episode+' 集</p><p class="watch">已经看到 <span class="watchepi">'+subscription[i].watch+'</span><input data-animeid="'+subscription[i].id+'" value="'+subscription[i].watch+'" type="text" class="anime-epi-input hidden" /> 集</p></div>').appendTo(".subscript-container");
         };
         $(".watchepi").click(function(){
             $(this).addClass('hidden');
@@ -273,6 +273,8 @@ var indexControl = {
             if (_this.del(this.attributes['data-animeid'].nodeValue)) {
                 localStorage.removeItem("subscription");
                 $(this).parent().hide();
+            } else {
+                alert('删除失败了orz..怎么回事Q^Q???');
             }
         });
     },
@@ -349,8 +351,11 @@ var indexControl = {
                         $('<div class="anime-item"><a class="icon add-anime icon-add" href="##" data-animeid="'+data[i].id+'">+</a><p class="anime-title"><a class="anime-title-a" href="/data/'+data[i].id+'">'+data[i].name+'</a></p><img class="anime-img" onerror=this.src="./static/img/ar.jpg" src="'+_this.imgurl+url+'" /></div>').appendTo(".subscript-container");
                     };
                     $(".add-anime").click(function(){
-                        if (_this.add(this.attributes['data-animeid'].nodeValue))
+                        if (_this.add(this.attributes['data-animeid'].nodeValue)) {
                             $(this).parent().hide();
+                        } else {
+                            alert('QAQ添加失败了！！！发生了什么！！');
+                        }
                     });
                 }
             },
