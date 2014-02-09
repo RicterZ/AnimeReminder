@@ -23,8 +23,11 @@
 {% block script %}
     <script>
         $(".add-anime").click(function(){
-            if (indexControl.add(this.attributes['data-animeid'].nodeValue))
+            if (indexControl.add(this.attributes['data-animeid'].nodeValue)) {
                 $(this).hide();
+            } else {
+                alert('添加失败了=-=，难道说你没有登录0w0?');
+            }
         });
         indexControl.cookie();
         $(".my-email").text(LittleUrl.decode(indexControl.cookieDict.email));
