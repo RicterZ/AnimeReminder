@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class Anime(models.Model):
-    aid = models.IntegerField(max_length=6)
+    aid = models.IntegerField(max_length=6, primary_key=True)
     name = models.CharField(max_length=100)
     intro = models.TextField(blank=True)
     is_end = models.BooleanField(default=False)

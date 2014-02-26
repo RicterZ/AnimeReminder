@@ -8,6 +8,7 @@ from api import views
 router = routers.DefaultRouter()
 router.register(r'anime', views.AnimeViewSet, base_name='anime')
 router.register(r'users', views.UserViewSet, base_name='user')
+router.register(r'subscriptions', views.SubscriptionViewSet, base_name='subscription')
 
 
 urlpatterns = patterns('',
