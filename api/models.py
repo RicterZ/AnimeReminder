@@ -8,16 +8,18 @@ class Anime(models.Model):
     name = models.CharField(max_length=100)
     intro = models.TextField(blank=True)
     is_end = models.BooleanField(default=False)
+    bilibili_aid = models.IntegerField(max_length=6, default=0)
     bilibili_link = models.URLField(blank=True)
-    poster_link = models.CharField(max_length=60)
+    bilibili_bgmcount = models.IntegerField(max_length=6, default=0)
+    poster_link = models.CharField(max_length=300)
     updated_time = models.DateTimeField(default=timezone.now())
-    user = models.ManyToManyField(through='Subscription')
+    user = models.ManyToManyField(User, through='Subscription')
 
     def __unicode__(self):
         return self.name
 
     class Meta:
-        ordering = ['-updated_date']
+        ordering = ['-updated_time']
 
 
 class Subscription(models.Model):
