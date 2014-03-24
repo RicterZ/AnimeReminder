@@ -10,28 +10,22 @@ def get_kankan_anime_detail(aid):
     http://data.pad.kankan.com/mobile/detail/74/74031.json
     http://data.pad.kankan.com/mobile/sub_detail/74/74031.json
     """
-
-    str_aid = str(aid)
-    aid_url = str_aid[0] + str_aid[1] + '/' + str_aid + '.json'
-    detail_url = 'http://data.pad.kankan.com/mobile/detail/' + aid_url
-    sdetail_url = 'http://data.pad.kankan.com/mobile/sub_detail/' + aid_url
+    aid = str(aid)
+    detail_url = 'http://data.pad.kankan.com/mobile/detail/%s/%s.json'
+    detail_url = detail_url % (aid[:2], aid)
 
     result = urllib2.urlopen(detail_url).read()
-    jobject = json.loads(result)
-    name = jobject['title']
-    intro = jobject['intro']
-    poster_link = jobject['poster']
-    is_end = False
-    if jobject['episodeCount'] == jobject['totalEpisodeCount']:
-        is_end = True
-
-    #result = urllib2.urlopen(sdetail_url).read()
-    #jobject = json.loads(result)
+    if result:
+        anime_data = json.loads(result)
+        is_end = True if anime_data.get('totalEpisodeCount') else False
+    else:
+        anime_data = get_kankan_anime_detail_by_win(aid)
+        is_end = False
 
     return {
         'aid': aid,
-        'name': name,
-        'intro': intro,
+        'name': anime_data['title'],
+        'intro': anime_data['intro'],
         'is_end': is_end,
 
         # 这里默认先不实现
@@ -40,7 +34,22 @@ def get_kankan_anime_detail(aid):
         'bilibili_bgmcount': 0,
         'bilibili_season': 1,
 
-        'poster_link': poster_link,
+        'poster_link': anime_data['poster'],
         'updated_time': now()
     }
 
+
+def get_kankan_anime_detail_by_win(aid):
+    """
+    参考 https://github.com/RicterZ/AnimeReminder/blob/master/lib/anime.py
+    下载 lua 文件然后解析
+    """
+    return {}
+
+
+def search_anime(name):
+    return []
+
+
+def search_anime_by_win(name):
+    return []

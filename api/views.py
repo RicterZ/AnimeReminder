@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from models import Anime, User, Subscription
 from permission import NoPermission, IsOwner, IsSelf
 from serializers import AnimeSerializer, UserSerializer, SubscriptionSerializer
+from back_end.parse_kankan import get_kankan_anime_detail
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -33,5 +34,6 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         aid = request.DATA.get('anime')
         if not Anime.objects.filter(pk=aid):
-            Anime.objects.create(aid=aid, name='auto create anime')
+            anime_data = get_kankan_anime_detail(aid)
+            Anime.objects.create(**anime_data)
         return super(SubscriptionViewSet, self).create(request, *args, **kwargs)
