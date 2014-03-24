@@ -2,7 +2,7 @@
 from django.utils.timezone import now
 
 
-def get_anime_detail(aid):
+def get_kankan_anime_detail(aid):
     """
     参考:
     http://data.pad.kankan.com/mobile/detail/74/74030.json
