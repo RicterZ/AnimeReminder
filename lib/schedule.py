@@ -1,4 +1,4 @@
-from lib.settings import *
+from settings import *
 
 anime = AnimeDataGetter()
 url = 'http://anime.kankan.com/'
