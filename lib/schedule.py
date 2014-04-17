@@ -22,10 +22,10 @@ update_list = re.compile('<ul id="sche_show_(\d)">([\w\W]+?)</ul>')
 update_data = re.compile('<li>(\d{2}\:\d{2}).*<a  href="(.*)" blockid="\d\d\d\d">(.*)</a></li>')
 for i in update_list.findall(req_data):
     for data in update_data.findall(i[1]):
-        anime_list.append(
+        anime_list.append({
             "week": i[0],
             "time": data[0],
             "url": data[1],
             "name": data[2],
-        )
+        })
 db.update('schedule', where='id=2', raw_data=json.dumps(anime_list))
