@@ -1,5 +1,13 @@
-import re, json
+import re, json, web
 from anime import AnimeDataGetter
+
+db = web.database(
+    host = 'localhost',
+    dbn  = 'mysql',
+    db   = '',
+    user = '',
+    pw   = ''
+)
 
 anime = AnimeDataGetter()
 url = 'http://anime.kankan.com/'
