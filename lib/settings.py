@@ -12,12 +12,12 @@ from lib.anime import AnimeDataGetter
 from lib.error import *
 
 web.config.debug = False
-env = jj.Environment(loader = jj.FileSystemLoader('templates'))
+env = jj.Environment(loader=jj.FileSystemLoader('templates'))
 
 db = web.database(
-    host = 'faceair.net',
-    dbn  = 'mysql',
-    db   = 'ricter_newanime', 
-    user = 'ricter', 
-    pw   = 'Canyue123'
+    host='',
+    dbn='mysql',
+    db='',
+    user='',
+    pw=''
 )
