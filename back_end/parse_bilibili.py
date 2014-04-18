@@ -4,23 +4,17 @@ import json
 import re
 
 season_dict = {
-    '零': '0',
     u'零': '0',
-    '一': '1',
     u'一': '1',
-    '二': '2',
     u'二': '2',
-    '三': '3',
     u'三': '3',
-    '四': '4',
     u'四': '4',
-    '五': '5',
     u'五': '5',
 }
 
 
 def parse_season(season_str):
-    match_season = re.compile(r'$第(.*)季^')
+    match_season = re.compile(u'第(.*)季')
     data = match_season.findall(season_str)
     return season_dict[data[0]] if data else 1
 
@@ -36,14 +30,20 @@ def parse_epi(sp_id, season_id=0):
     return 0 if begin == -1 or end == -1 else int(result[begin+18:end-3])
 
 
+def get_real_name(name):
+    url = urllib2.urlopen('http://www.bilibili.tv/sp/%s' % name).url
+    return url.split('/')[-1]
+
+
 def get_bilibili_anime_detail(name):
-    api_url = 'http://api.bilibili.tv/sp?title=%s' % name
-    sp_data = json.loads(urllib2.urlopen(api_url).read())
+    api_url = 'http://api.bilibili.tv/sp?title=%s'
+    real_title = get_real_name(name)
+    sp_data = json.loads(urllib2.urlopen(api_url % real_title).read())
     season, season_id = 0, 0
     if 'code' in sp_data:
         return {}
-    sp_id = sp_data['spid']
 
+    sp_id = sp_data['spid']
     if 'season' in sp_data:
         for index in sp_data['season']:
             season_data = sp_data['season'][index]

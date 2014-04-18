@@ -3,7 +3,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AnimeReminder_django.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_anime.settings")
 
     from django.core.management import execute_from_command_line
 

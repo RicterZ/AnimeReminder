@@ -48,9 +48,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'AnimeReminder_django.urls'
+ROOT_URLCONF = 'project_anime.urls'
 
-WSGI_APPLICATION = 'AnimeReminder_django.wsgi.application'
+WSGI_APPLICATION = 'project_anime.wsgi.application'
 
 
 # Database
@@ -97,3 +97,5 @@ try:
     from local_settings import *
 except ImportError:
     SECRET_KEY = ''
+
+
