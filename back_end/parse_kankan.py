@@ -1,7 +1,8 @@
 #coding: utf-8
-from django.utils.timezone import now
 import urllib2
 import json
+from django.utils.timezone import now
+from back_end.parse_bilibili import get_bilibili_anime_detail
 
 
 def get_kankan_anime_detail(aid):
@@ -22,6 +23,7 @@ def get_kankan_anime_detail(aid):
         anime_data = get_kankan_anime_detail_by_win(aid)
         is_end = False
 
+    bilibili_data = get_bilibili_anime_detail(anime_data['title'])
     return {
         'aid': aid,
         'name': anime_data['title'],
@@ -48,6 +50,9 @@ def get_kankan_anime_detail_by_win(aid):
 
 
 def search_anime(name):
+    """
+    这里是搜索的接口
+    """
     return []
 
 

@@ -3,6 +3,14 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
+class Group(models.Model):
+    name = models.TextField(max_length=20)
+    owner = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Anime(models.Model):
     aid = models.IntegerField(max_length=6, primary_key=True)
     name = models.CharField(max_length=100)
@@ -25,6 +33,8 @@ class Anime(models.Model):
 
 class Subscription(models.Model):
     anime = models.ForeignKey(Anime, related_name='subs')
-    user = models.ForeignKey(User, related_name='users')
+    user = models.ForeignKey(User, related_name='user')
     is_read = models.BooleanField(default=False)
     currently_read = models.IntegerField(default=0)
+    group = models.ForeignKey(Group)
+
