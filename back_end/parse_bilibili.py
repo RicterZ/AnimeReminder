@@ -20,13 +20,14 @@ def parse_season(season_str):
 
 
 def parse_epi(sp_id, season_id=0):
-    #TODO
+    #TODO: 有可能会有中文集数，或者第⑨集这样的
+    match_epi = re.compile('<div class="t">第(.*)集</div>')
     param = str(sp_id) if not season_id else '%d-%d' % (sp_id, season_id)
-    request_url = 'http://www.bilibili.tv/sppage/bangumi-%s-1.html' % param
-    result = urllib2.urlopen(request_url).read()
-    begin = result.find('<div class="t">')
-    end = result.find('</div></a>')
-    return 0 if begin == -1 or end == -1 else int(result[begin+18:end-3])
+    bangumi_url = 'http://www.bilibili.tv/sppage/bangumi-%s-1.html' % param
+    response = urllib2.urlopen(bangumi_url).read()
+
+    epi = match_epi.findall(response)
+    return int(epi[0]) if epi else 0
 
 
 def get_real_name(name):
