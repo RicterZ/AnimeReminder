@@ -20,9 +20,8 @@ def parse_season(season_str):
 
 
 def parse_epi(sp_id, season_id=0):
-    param = str(sp_id)
-    if season_id:
-        param += '-' + str(season_id)
+    #TODO
+    param = str(sp_id) if not season_id else '%d-%d' % (sp_id, season_id)
     request_url = 'http://www.bilibili.tv/sppage/bangumi-%s-1.html' % param
     result = urllib2.urlopen(request_url).read()
     begin = result.find('<div class="t">')
