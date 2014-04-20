@@ -19,3 +19,6 @@ class ParserTest(SimpleTestCase):
         self.assertEqual(data['bilibili_aid'], 5691)
         self.assertEqual(data['bilibili_bgmcount'], 12)
         self.assertEqual(data['bilibili_season'], 2)
+
+        data = get_bilibili_anime_detail('魔法少女小圆')
+        self.assertEqual(data['bilibili_bgmcount'], 12)

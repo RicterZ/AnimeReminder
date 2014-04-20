@@ -27,7 +27,9 @@ def parse_epi(sp_id, season_id=0):
     response = urllib2.urlopen(bangumi_url).read()
 
     epi = match_epi.findall(response)
-    return int(epi[0]) if epi else 0
+    epi = epi[0] if epi else 0
+    epi = int(epi) if not '-' in epi else int(epi.split('-')[-1])
+    return epi
 
 
 def get_real_name(name):
