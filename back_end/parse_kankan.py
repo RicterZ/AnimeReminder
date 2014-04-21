@@ -1,4 +1,5 @@
 #coding: utf-8
+import re
 import urllib2
 import json
 from django.utils.timezone import now
@@ -30,15 +31,9 @@ def get_kankan_anime_detail(aid):
         'intro': anime_data['intro'],
         'is_end': is_end,
 
-        # 这里默认先不实现
-        'bilibili_aid': 0,
-        'bilibili_link': '',
-        'bilibili_bgmcount': 0,
-        'bilibili_season': 1,
-
         'poster_link': anime_data['poster'],
         'updated_time': now()
-    }
+    }.update(bilibili_data)
 
 
 def get_kankan_anime_detail_by_win(aid):
@@ -53,8 +48,10 @@ def search_anime(name):
     """
     这里是搜索的接口
     """
-    return []
+    search_url = 'http://mediaso.xmp.kankan.xunlei.com/search.php?keyword=%s'
+    match_name = re.compile('\{sname=\"(.*)\".*?imovieid=([\d]+), Type=\"anime\"')
 
+    data = urllib2.urlopen(search_url % name).read()
+    anime_data = match_name.findall(data)
+    return anime_data
 
-def search_anime_by_win(name):
-    return []

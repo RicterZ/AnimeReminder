@@ -1,6 +1,7 @@
 #coding: utf-8
 from django.test import SimpleTestCase
 from back_end.parse_bilibili import *
+from back_end.parse_kankan import *
 
 
 class ParserTest(SimpleTestCase):
@@ -22,3 +23,10 @@ class ParserTest(SimpleTestCase):
 
         data = get_bilibili_anime_detail('魔法少女小圆')
         self.assertEqual(data['bilibili_bgmcount'], 12)
+
+        data = get_bilibili_anime_detail('幸运星')
+        self.assertEqual(data['bilibili_bgmcount'], 24)
+
+    def test_search_anime(self):
+        data = search_anime('魔法少女小圆')
+        self.assertEqual([('魔法少女小圆', '60075'), ('魔法少女小圆 剧场版', '73391')], data)

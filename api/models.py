@@ -22,7 +22,7 @@ class Anime(models.Model):
     bilibili_season = models.IntegerField(max_length=10, default=1)
     poster_link = models.CharField(max_length=300)
     updated_time = models.DateTimeField(default=timezone.now())
-    user = models.ManyToManyField(User, through='Subscription')
+    #user = models.ManyToManyField(User, through='Subscription')
 
     def __unicode__(self):
         return self.name
@@ -32,9 +32,11 @@ class Anime(models.Model):
 
 
 class Subscription(models.Model):
-    anime = models.ForeignKey(Anime, related_name='subs')
+    anime = models.OneToOneField(Anime)
     user = models.ForeignKey(User, related_name='user')
     is_read = models.BooleanField(default=False)
     currently_read = models.IntegerField(default=0)
     group = models.ForeignKey(Group)
 
+    def __unicode__(self):
+        return self.anime.name
