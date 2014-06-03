@@ -9,6 +9,7 @@ router = routers.DefaultRouter()
 router.register(r'anime', views.AnimeViewSet, base_name='anime')
 router.register(r'users', views.UserViewSet, base_name='user')
 router.register(r'subscriptions', views.SubscriptionViewSet, base_name='subscription')
+router.register(r'search', views.SearchViewSet, base_name='search')
 
 
 urlpatterns = patterns('',

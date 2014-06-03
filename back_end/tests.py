@@ -29,4 +29,10 @@ class ParserTest(SimpleTestCase):
 
     def test_search_anime(self):
         data = search_anime('魔法少女小圆')
-        self.assertEqual([('魔法少女小圆', '60075'), ('魔法少女小圆 剧场版', '73391')], data)
+        print data
+
+        data = search_anime('日常')
+        print data
+
+        data = search_anime('qwidfdsigwngfkivj')
+        print data
