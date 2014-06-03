@@ -27,5 +27,6 @@ Web.py虽然轻量级，但是写的代码比较脏，M和C耦合在一起了，
 + 前端未定
 
 ##捐助
-大爷看在我重构了四次的份上给点捐助吧（喂！！
-[Alipay](http://me.alipay.com/ricterz)
+大爷看在我重构了四次的份上给点捐助吧（喂！！  
+支付寶帳號：ricterzheng@gmail.com
+  
