@@ -59,4 +59,5 @@ def get_bilibili_anime_detail(name):
         "bilibili_link": "http://www.bilibili.tv/sp/%s" % real_title,
         "bilibili_bgmcount": epi,
         "bilibili_season": season,
+        "bilibili_name": urllib2.unquote(real_title),
     }
