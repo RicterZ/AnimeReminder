@@ -1,6 +1,6 @@
 from django.db.models import Q
 from rest_framework import serializers
-from models import Anime, Subscription, User
+from models import Anime, Subscription, User, UserExtension
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -15,9 +15,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         read_only_fields = ('user',)
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserExtensionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserExtension
+        fields = ('date_joined', 'is_staff', 'last_login', 'email', 'username', 'password')
+        read_only_fields = ('date_joined', 'is_staff', 'last_login')
 
-    def validate(self, attrs):
-        return attrs

@@ -18,16 +18,22 @@ class NoPermission(BasePermission):
         return False
 
 
-class IsSelf(BasePermission):
+class IsOwnerOrReadOnly(BasePermission):
     def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
         return not request.user == AnonymousUser()
 
     def has_object_permission(self, request, view, obj):
-        return request.user == obj
+        if request.method in SAFE_METHODS:
+            return True
+        return request.user == obj.user
 
 
 class IsOwner(BasePermission):
     def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
         return not request.user == AnonymousUser()
 
     def has_object_permission(self, request, view, obj):

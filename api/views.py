@@ -3,9 +3,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
-from models import Anime, User, Subscription
-from permission import NoPermission, IsOwner, IsSelf, ReadOnly
-from serializers import AnimeSerializer, UserSerializer, SubscriptionSerializer
+from models import Anime, User, Subscription, UserExtension
+from permission import NoPermission, IsOwnerOrReadOnly, ReadOnly, IsOwner
+from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer
 from back_end.parse_kankan import get_anime_detail, search_anime
 
 
@@ -14,12 +14,6 @@ class AnimeViewSet(viewsets.ModelViewSet):
     serializer_class = AnimeSerializer
     permission_classes = (IsAuthenticated,)
     #permission_classes = (NoPermission,)
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsSelf,)
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
@@ -55,3 +49,9 @@ class SearchViewSet(viewsets.ReadOnlyModelViewSet):
 
         data = Anime.objects.filter(Q(name__contains=keyword) | Q(bilibili_name__contains=keyword))
         return data if data else search_anime(keyword)
+
+
+class UserExtensionViewSet(viewsets.ModelViewSet):
+    serializer_class = UserExtensionSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+    queryset = UserExtension.objects.all()

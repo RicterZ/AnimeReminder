@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
+from .signals import *
 
 
 class Group(models.Model):
@@ -45,3 +46,10 @@ class Subscription(models.Model):
 
     def __unicode__(self):
         return self.anime.name
+
+
+class UserExtension(User):
+    user = models.OneToOneField(User)
+    is_email_reminder = models.BooleanField(default=False)
+
+    objects = UserManager()
