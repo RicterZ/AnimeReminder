@@ -1,6 +1,5 @@
-from django.db.models import Q
 from rest_framework import serializers
-from models import Anime, Subscription, User, UserExtension
+from models import Anime, Subscription, UserExtension
 
 
 class AnimeSerializer(serializers.ModelSerializer):

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User, UserManager
+from django.contrib.auth.models import UserManager
 from .signals import *
 
 

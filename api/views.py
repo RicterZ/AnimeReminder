@@ -1,9 +1,7 @@
 from django.db.models import Q
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
-from models import Anime, User, Subscription, UserExtension
+from models import Anime, Subscription, UserExtension
 from permission import NoPermission, IsOwnerOrReadOnly, ReadOnly, IsOwner
 from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer
 from back_end.parse_kankan import get_anime_detail, search_anime
@@ -12,8 +10,7 @@ from back_end.parse_kankan import get_anime_detail, search_anime
 class AnimeViewSet(viewsets.ModelViewSet):
     queryset = Anime.objects.all()
     serializer_class = AnimeSerializer
-    permission_classes = (IsAuthenticated,)
-    #permission_classes = (NoPermission,)
+    permission_classes = (NoPermission,)
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
