@@ -2,22 +2,28 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from models import Anime, Subscription, UserExtension
-from permission import NoPermission, IsOwnerOrReadOnly, ReadOnly, IsOwner
-from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer
+from permission import NoPermission, IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
+from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer, UserExtensionCreateSerializer
 from back_end.parse_kankan import get_anime_detail, search_anime
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
     queryset = Anime.objects.all()
     serializer_class = AnimeSerializer
-    permission_classes = (NoPermission,)
+    permission_classes = (ReadOnly,)
 
 
-class SubscriptionViewSet(viewsets.ModelViewSet):
+class SubscriptionViewSet(viewsets.mixins.CreateModelMixin,
+                          viewsets.mixins.DestroyModelMixin,
+                          viewsets.mixins.RetrieveModelMixin,
+                          viewsets.mixins.ListModelMixin,
+                          viewsets.GenericViewSet):
     serializer_class = SubscriptionSerializer
-    permission_classes = (IsOwner,)
+    permission_classes = (IsOwner, IsAuthenticated,)
 
     def get_queryset(self):
+        if self.request.user == AnonymousUser():
+            return []
         return Subscription.objects.filter(user=self.request.user)
 
     def pre_save(self, obj):
@@ -49,6 +55,10 @@ class SearchViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserExtensionViewSet(viewsets.ModelViewSet):
-    serializer_class = UserExtensionSerializer
     permission_classes = (IsOwnerOrReadOnly,)
     queryset = UserExtension.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method in ('POST', 'GET'):
+            return UserExtensionCreateSerializer
+        return UserExtensionSerializer

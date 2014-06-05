@@ -54,3 +54,6 @@ class UserExtension(User):
     is_email_verified = models.BooleanField(default=False)
 
     objects = UserManager()
+
+    def __unicode__(self):
+        return self.username
