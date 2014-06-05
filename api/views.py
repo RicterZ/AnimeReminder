@@ -1,8 +1,9 @@
 from django.db.models import Q
-from rest_framework.response import Response
 from rest_framework import viewsets, status
+from rest_framework.response import Response
 from models import Anime, Subscription, UserExtension
-from permission import NoPermission, IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
+from exceptions import RegisterException
+from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
 from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer, UserExtensionCreateSerializer
 from back_end.parse_kankan import get_anime_detail, search_anime
 
@@ -62,3 +63,8 @@ class UserExtensionViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'GET'):
             return UserExtensionCreateSerializer
         return UserExtensionSerializer
+
+    def pre_save(self, obj):
+        if UserExtension.objects.filter(email=obj.email).count() and obj.email:
+            raise RegisterException('The email had been used.')
+        #super(UserExtensionViewSet, self).pre_save(obj=obj)

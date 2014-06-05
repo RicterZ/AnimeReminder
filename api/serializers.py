@@ -27,3 +27,4 @@ class UserExtensionCreateSerializer(UserExtensionSerializer):
         model = UserExtension
         fields = ('date_joined', 'is_staff', 'last_login', 'email', 'username', 'password')
         read_only_fields = ('date_joined', 'is_staff', 'last_login')
+

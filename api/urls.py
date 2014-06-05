@@ -13,5 +13,5 @@ router.register(r'profile', views.UserExtensionViewSet, base_name='profile')
 
 
 urlpatterns = patterns('',
-                       url(r'^', include(router.urls)),
-                       )
+    url(r'^', include(router.urls)),
+)
