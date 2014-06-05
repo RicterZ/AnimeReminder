@@ -15,6 +15,13 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         read_only_fields = ('user',)
 
 
+class SubscriptionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ('anime', 'is_read', 'currently_read', 'group', 'id')
+        read_only_fields = ('user', 'anime')
+
+
 class UserExtensionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserExtension

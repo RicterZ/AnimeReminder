@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from models import Anime, Subscription, UserExtension
 from exceptions import RegisterException
 from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
-from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer, UserExtensionCreateSerializer
+from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer, \
+    UserExtensionCreateSerializer, SubscriptionUpdateSerializer
 from back_end.parse_kankan import get_anime_detail, search_anime
 
 
@@ -14,13 +15,14 @@ class AnimeViewSet(viewsets.ModelViewSet):
     permission_classes = (ReadOnly,)
 
 
-class SubscriptionViewSet(viewsets.mixins.CreateModelMixin,
-                          viewsets.mixins.DestroyModelMixin,
-                          viewsets.mixins.RetrieveModelMixin,
-                          viewsets.mixins.ListModelMixin,
-                          viewsets.GenericViewSet):
+class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializer
     permission_classes = (IsOwner, IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return SubscriptionUpdateSerializer
+        return SubscriptionSerializer
 
     def get_queryset(self):
         if self.request.user == AnonymousUser():
@@ -74,7 +76,7 @@ class UserExtensionViewSet(viewsets.ModelViewSet):
                 raise RegisterException('The username had been used.')
             UserExtension.objects.create_user(username=serializer.data['username'],
                                               password=serializer.data['password'], email=serializer.data['email'])
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"status": "Register a user successfully."}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
