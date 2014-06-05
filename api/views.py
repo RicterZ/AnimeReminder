@@ -64,6 +64,17 @@ class UserExtensionViewSet(viewsets.ModelViewSet):
             return UserExtensionCreateSerializer
         return UserExtensionSerializer
 
-    def pre_save(self, obj):
-        if UserExtension.objects.filter(email=obj.email).count() and obj.email:
-            raise RegisterException('The email had been used.')
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer_class()(data=request.DATA)
+        if serializer.is_valid():
+            if UserExtension.objects.filter(email__iexact=serializer.data['email']).count() \
+                    and serializer.data['email']:
+                raise RegisterException('The email had been used.')
+            if UserExtension.objects.filter(username__iexact=serializer.data['username']):
+                raise RegisterException('The username had been used.')
+            UserExtension.objects.create_user(username=serializer.data['username'],
+                                              password=serializer.data['password'], email=serializer.data['email'])
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
