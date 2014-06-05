@@ -67,4 +67,3 @@ class UserExtensionViewSet(viewsets.ModelViewSet):
     def pre_save(self, obj):
         if UserExtension.objects.filter(email=obj.email).count() and obj.email:
             raise RegisterException('The email had been used.')
-        #super(UserExtensionViewSet, self).pre_save(obj=obj)
