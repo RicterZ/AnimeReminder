@@ -12,7 +12,8 @@ from back_end.parse_kankan import get_anime_detail, search_anime
 class AnimeViewSet(viewsets.ModelViewSet):
     queryset = Anime.objects.all()
     serializer_class = AnimeSerializer
-    permission_classes = (ReadOnly,)
+    # for debug
+    #permission_classes = (ReadOnly,)
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):

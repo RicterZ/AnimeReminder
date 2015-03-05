@@ -5,27 +5,26 @@ from models import Anime, Subscription, UserExtension
 class AnimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anime
-        fields = ('aid', 'name', 'intro', 'is_end', 'episode', 'poster_link', 'updated_time')
+        fields = ('id', 'aid', 'name', 'intro', 'is_end', 'episode', 'poster_link', 'updated_time')
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ('anime', 'is_read', 'currently_read', 'group', 'id')
-        read_only_fields = ('user',)
+        fields = ('id', 'anime', 'is_read', 'currently_read', 'status', 'user')
 
 
 class SubscriptionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ('anime', 'is_read', 'currently_read', 'group', 'id')
+        fields = ('id', 'anime', 'is_read', 'currently_read', 'status')
         read_only_fields = ('user', 'anime')
 
 
 class UserExtensionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserExtension
-        fields = ('date_joined', 'is_staff', 'last_login', 'email', 'username', 'password')
+        fields = ('id', 'date_joined', 'is_staff', 'last_login', 'email', 'username', 'password')
         read_only_fields = ('date_joined', 'is_staff', 'last_login', 'username')
 
 
