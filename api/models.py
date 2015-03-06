@@ -11,20 +11,14 @@ class Anime(models.Model):
     intro = models.TextField(blank=True)
     is_end = models.BooleanField(default=False)
     episode = models.IntegerField(default=0)
-    bilibili_aid = models.IntegerField(default=0)
-    bilibili_name = models.CharField(max_length=100)
-    bilibili_link = models.URLField(blank=True)
-    bilibili_bgmcount = models.IntegerField(default=0)
-    bilibili_season = models.IntegerField(default=1)
+    link = models.URLField(blank=True)
+    season = models.IntegerField(default=1)
     poster_link = models.CharField(max_length=300, default='')
     updated_time = models.DateTimeField(default=timezone.now())
     subscription = models.ManyToManyField(User, through='Subscription')
 
     def __unicode__(self):
         return self.name
-
-    def get_episode_count(self):
-        return self.episode if self.episode > self.bilibili_bgmcount else self.bilibili_bgmcount
 
     class Meta:
         ordering = ['-updated_time']

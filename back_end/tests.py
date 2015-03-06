@@ -1,6 +1,6 @@
 #coding: utf-8
 from django.test import SimpleTestCase
-from back_end.parse_bilibili import *
+from back_end.bilibili import *
 from back_end.parse_kankan import *
 
 

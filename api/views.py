@@ -6,7 +6,7 @@ from exceptions import RegisterException
 from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
 from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
     SubscriptionUpdateSerializer
-from back_end.parse_kankan import get_anime_detail
+from back_end.bilibili import get_anime_detail
 
 
 class AnimeViewSet(viewsets.ModelViewSet):

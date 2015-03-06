@@ -19,7 +19,7 @@ def parse_season(season_str):
     return season_dict[data[0]] if data else 1
 
 
-def parse_epi(sp_id, season_id=0):
+def parse_episode(sp_id, season_id=0):
     # TODO: 有可能会有中文集数，或者第⑨集这样的
     match_epi = re.compile('<div class="t">第(\d+)-?(\d+)?集</div>')
     param = str(sp_id) if not season_id else '%d-%d' % (sp_id, season_id)
@@ -36,7 +36,7 @@ def get_real_name(name):
     return name if not name.startswith('search') else None
 
 
-def get_bilibili_anime_detail(name):
+def get_anime_detail(name):
     api_url = 'http://api.bilibili.tv/sp?title=%s'
     real_title = get_real_name(name)
 
@@ -56,14 +56,14 @@ def get_bilibili_anime_detail(name):
                 season_id = season_data['season_id']
                 break
     season = int(season) if season else 1
-    epi = parse_epi(sp_id, season_id)
+    episode = parse_episode(sp_id, season_id)
 
     return {
-        "bilibili_aid": sp_id,
-        "bilibili_link": "http://www.bilibili.tv/sp/%s" % real_title,
-        "bilibili_bgmcount": epi,
-        "bilibili_season": season,
-        "bilibili_name": urllib2.unquote(real_title),
+        "aid": sp_id,
+        "link": "http://www.bilibili.tv/sp/%s" % real_title,
+        "episode": episode,
+        "season": season,
+        "name": urllib2.unquote(real_title),
     }
 
 
