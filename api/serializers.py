@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Anime, Subscription, UserExtension
+from models import Anime, Subscription, User
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -21,16 +21,10 @@ class SubscriptionUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'anime')
 
 
-class UserExtensionSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserExtension
-        fields = ('id', 'date_joined', 'is_staff', 'last_login', 'email', 'username', 'password')
-        read_only_fields = ('date_joined', 'is_staff', 'last_login', 'username')
+        model = User
+        fields = ('id', 'date_joined', 'is_staff', 'last_login', 'email', 'username')
+        read_only_fields = ('id', 'date_joined', 'is_staff', 'last_login', 'username')
 
-
-class UserExtensionCreateSerializer(UserExtensionSerializer):
-    class Meta:
-        model = UserExtension
-        fields = ('date_joined', 'is_staff', 'last_login', 'email', 'username', 'password')
-        read_only_fields = ('date_joined', 'is_staff', 'last_login')
 

@@ -1,12 +1,12 @@
 from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from models import Anime, Subscription, UserExtension
+from models import Anime, Subscription, User
 from exceptions import RegisterException
 from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
-from serializers import AnimeSerializer, SubscriptionSerializer, UserExtensionSerializer, \
-    UserExtensionCreateSerializer, SubscriptionUpdateSerializer
-from back_end.parse_kankan import get_anime_detail, search_anime
+from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
+    SubscriptionUpdateSerializer
+from back_end.parse_kankan import get_anime_detail
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -55,27 +55,23 @@ class SearchViewSet(viewsets.ReadOnlyModelViewSet):
             return []
 
         data = Anime.objects.filter(Q(name__contains=keyword) | Q(bilibili_name__contains=keyword))
-        return data if data else search_anime(keyword)
+        return data if data else ''
 
 
-class UserExtensionViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsOwnerOrReadOnly,)
-    queryset = UserExtension.objects.all()
-
-    def get_serializer_class(self):
-        if self.request.method in ('POST', 'GET'):
-            return UserExtensionCreateSerializer
-        return UserExtensionSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()(data=request.DATA)
         if serializer.is_valid():
-            if UserExtension.objects.filter(email__iexact=serializer.data['email']).count() \
+            if User.objects.filter(email__iexact=serializer.data['email']).count() \
                     and serializer.data['email']:
                 raise RegisterException('The email had been used.')
-            if UserExtension.objects.filter(username__iexact=serializer.data['username']):
+            if User.objects.filter(username__iexact=serializer.data['username']):
                 raise RegisterException('The username had been used.')
-            UserExtension.objects.create_user(username=serializer.data['username'],
+            User.objects.create_user(username=serializer.data['username'],
                                               password=serializer.data['password'], email=serializer.data['email'])
             return Response({"status": "Register a user successfully."}, status=status.HTTP_201_CREATED)
         else:

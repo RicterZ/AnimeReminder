@@ -40,13 +40,3 @@ class Subscription(models.Model):
     def __unicode__(self):
         return self.anime.name
 
-
-class UserExtension(User):
-    user = models.OneToOneField(User)
-    is_email_reminder = models.BooleanField(default=False)
-    is_email_verified = models.BooleanField(default=False)
-
-    objects = UserManager()
-
-    def __unicode__(self):
-        return self.username

@@ -27,6 +27,7 @@ class ParserTest(SimpleTestCase):
         data = get_bilibili_anime_detail('幸运星')
         self.assertEqual(data['bilibili_bgmcount'], 24)
 
+    '''
     def test_search_anime(self):
         data = search_anime('魔法少女小圆')
         print data
@@ -36,3 +37,4 @@ class ParserTest(SimpleTestCase):
 
         data = search_anime('qwidfdsigwngfkivj')
         print data
+    '''
