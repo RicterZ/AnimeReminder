@@ -1,71 +1,74 @@
 #coding:utf-8
-import urllib2
-import json
-import re
-
-season_dict = {
-    u'零': '0',
-    u'一': '1',
-    u'二': '2',
-    u'三': '3',
-    u'四': '4',
-    u'五': '5',
-}
+import requests
+from collections import Counter
 
 
-def parse_season(season_str):
-    match_season = re.compile(u'第(.*)季')
-    data = match_season.findall(season_str)
-    return season_dict[data[0]] if data else 1
+BILI_URL = 'http://www.bilibili.com/'
+BILI_API_URL = 'http://api.bilibili.com/'
 
 
 def parse_episode(sp_id, season_id=0):
-    # TODO: 有可能会有中文集数，或者第⑨集这样的
-    match_epi = re.compile('<div class="t">第(\d+)-?(\d+)?集</div>')
-    param = str(sp_id) if not season_id else '%d-%d' % (sp_id, season_id)
-    bangumi_url = 'http://www.bilibili.tv/sppage/bangumi-%s-1.html' % param
-    response = urllib2.urlopen(bangumi_url).read()
+    '''获取每一季的番剧集数'''
+    # TODO: 对于合集的处理
+    bangumi_url = BILI_API_URL + 'spview'
+    params = {
+        'spid': sp_id,
+        'bangumi': 1,
+        'season_id': season_id,
+    }
 
-    result = match_epi.findall(response)
-    return 0 if not result else int(result[0][0]) if not result[0][1] else int(result[0][1])
+    try:
+        response = requests.get(bangumi_url, params=params).json()
+    except requests.RequestException:
+        # -1 表示获取失败，需要人工重新获取
+        return -1
+
+    return response['count']
+
+
+def parse_season(aid, seasons):
+    '''处理每一季的数据'''
+    return [{
+        'season_id': season['season_id'],
+        'name': season['season_name'],
+        'default': season['default'],
+        'cover': season['index_cover'],
+        'count': parse_episode(aid, season['season_id'])
+    } for season in seasons]
 
 
 def get_real_name(name):
-    url = urllib2.urlopen('http://www.bilibili.tv/sp/%s' % name).url
+    '''获取番剧的通用名称'''
+    # TODO: 需要修改
+    url = requests.get(BILI_URL + 'sp/%s' % name).url
     name = url.split('/')[-1]
     return name if not name.startswith('search') else None
 
 
 def get_anime_detail(name):
-    api_url = 'http://api.bilibili.tv/sp?title=%s'
+    '''获取番剧详情'''
+    api_url = BILI_API_URL + 'sp?title=%s'
     real_title = get_real_name(name)
 
     # the anime not exist on the bilibili
     if not real_title:
         return {}
 
-    sp_data = json.loads(urllib2.urlopen(api_url % real_title).read())
-    season, season_id = 0, 0
 
-    sp_id = sp_data['spid']
-    if 'season' in sp_data:
-        for index in sp_data['season']:
-            season_data = sp_data['season'][index]
-            if season_data['default']:
-                season = parse_season(season_data['season_name'])
-                season_id = season_data['season_id']
-                break
-    season = int(season) if season else 1
-    episode = parse_episode(sp_id, season_id)
+    bangumi_data = requests.get(api_url % real_title).json()
+    season = parse_season(bangumi_data['spid'], bangumi_data['season']) if 'season' in bangumi_data else {}
+    episode = sum((i['count'] for i in season)) if season else parse_episode(bangumi_data['spid'])
 
     return {
-        "aid": sp_id,
-        "link": "http://www.bilibili.tv/sp/%s" % real_title,
-        "episode": episode,
-        "season": season,
-        "name": urllib2.unquote(real_title),
+        'aid': bangumi_data['spid'],
+        'episode': episode,
+        'season': season,
+        'is_end': bangumi_data['isbangumi_end'],
+        'name': bangumi_data['title'],
+        'cover': bangumi_data['cover'],
+        'description': bangumi_data['description'],
+        'link': BILI_URL + 'sp/%s' % real_title,
+        'lastupdate': bangumi_data['lastupdate']
     }
 
 
-if __name__ == '__main__':
-    print get_real_name('asdad')

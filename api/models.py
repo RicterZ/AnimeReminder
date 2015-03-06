@@ -6,7 +6,7 @@ from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED
 
 
 class Anime(models.Model):
-    aid = models.TextField(default='')
+    aid = models.TextField(default=0)
     name = models.CharField(max_length=100)
     intro = models.TextField(blank=True)
     is_end = models.BooleanField(default=False)
@@ -22,6 +22,13 @@ class Anime(models.Model):
 
     class Meta:
         ordering = ['-updated_time']
+
+
+class Season(models.Model):
+    season_id = models.IntegerField(default=0)
+    name = models.CharField(max_length=100)
+    cover = models.URLField(blank=True)
+    default = models.BooleanField(default=False)
 
 
 class Subscription(models.Model):

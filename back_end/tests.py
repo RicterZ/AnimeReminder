@@ -1,31 +1,32 @@
 #coding: utf-8
-from django.test import SimpleTestCase
-from back_end.bilibili import *
-from back_end.parse_kankan import *
+import unittest
+from bilibili import get_anime_detail
 
 
-class ParserTest(SimpleTestCase):
+class ParserTest(unittest.TestCase):
     def test_parse_bilibili(self):
-        data = get_bilibili_anime_detail('日常')
-        self.assertEqual(data['bilibili_aid'], 782)
-        self.assertEqual(data['bilibili_bgmcount'], 26)
-        self.assertEqual(data['bilibili_season'], 1)
 
-        data = get_bilibili_anime_detail('中二病也要谈恋爱！')
-        self.assertEqual(data['bilibili_aid'], 5691)
-        self.assertEqual(data['bilibili_bgmcount'], 12)
-        self.assertEqual(data['bilibili_season'], 2)
+        data = get_anime_detail('疑犯追踪')
+        self.assertEqual(data['aid'], 17309)
+        self.assertEqual(data['episode'], 61)
 
-        data = get_bilibili_anime_detail('中二病也要谈恋爱')
-        self.assertEqual(data['bilibili_aid'], 5691)
-        self.assertEqual(data['bilibili_bgmcount'], 12)
-        self.assertEqual(data['bilibili_season'], 2)
+        data = get_anime_detail('日常')
+        self.assertEqual(data['aid'], 782)
+        self.assertEqual(data['episode'], 28)
 
-        data = get_bilibili_anime_detail('魔法少女小圆')
-        self.assertEqual(data['bilibili_bgmcount'], 12)
+        data = get_anime_detail('中二病也要谈恋爱！')
+        self.assertEqual(data['aid'], 5691)
+        self.assertEqual(data['episode'], 22)
 
-        data = get_bilibili_anime_detail('幸运星')
-        self.assertEqual(data['bilibili_bgmcount'], 24)
+        data = get_anime_detail('中二病也要谈恋爱')
+        self.assertEqual(data['aid'], 5691)
+        self.assertEqual(data['episode'], 22)
+
+        data = get_anime_detail('魔法少女小圆')
+        self.assertEqual(data['episode'], 1)
+
+        data = get_anime_detail('幸运星')
+        self.assertEqual(data['episode'], 2)
 
     '''
     def test_search_anime(self):
@@ -38,3 +39,7 @@ class ParserTest(SimpleTestCase):
         data = search_anime('qwidfdsigwngfkivj')
         print data
     '''
+
+
+if __name__ == '__main__':
+    unittest.main()
