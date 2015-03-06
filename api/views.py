@@ -5,8 +5,8 @@ from models import Anime, Subscription, User
 from exceptions import RegisterException
 from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
 from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
-    SubscriptionUpdateSerializer
-from back_end.bilibili import get_anime_detail
+    SubscriptionUpdateSerializer, SearchSerializer
+from back_end.bilibili import get_anime_detail, search
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -47,15 +47,15 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
 
 class SearchViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = AnimeSerializer
+    serializer_class = SearchSerializer
 
     def get_queryset(self):
-        keyword = self.request.GET.get('name', None)
+        keyword = self.request.GET.get('keyword', None)
         if not keyword:
             return []
 
-        data = Anime.objects.filter(Q(name__contains=keyword) | Q(bilibili_name__contains=keyword))
-        return data if data else ''
+        data = Anime.objects.filter(Q(name__contains=keyword) | Q(description__contains=keyword))
+        return data if data else search(keyword)
 
 
 class UserViewSet(viewsets.ModelViewSet):

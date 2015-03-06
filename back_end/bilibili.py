@@ -1,6 +1,6 @@
 #coding:utf-8
 import requests
-from collections import Counter
+from datetime import datetime
 
 
 BILI_URL = 'http://www.bilibili.com/'
@@ -71,4 +71,25 @@ def get_anime_detail(name):
         'lastupdate': bangumi_data['lastupdate']
     }
 
+
+def search(name):
+    url = BILI_API_URL + 'search/'
+    params = {'keyword': name}
+
+    try:
+        result = requests.get(url, params=params).json()
+    except ValueError:
+        return {}
+    return convert_to_response(result)
+
+
+def convert_to_response(result):
+    return [{
+        'aid': row['spid'],
+        'name': row['title'],
+        'description': row['description'],
+        'episode': row['count'],
+        'poster_link': row['pic'],
+        'updated_time': datetime.fromtimestamp(row['lastupdate']),
+    } for row in result['result'] if 'spid' in row]
 

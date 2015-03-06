@@ -5,7 +5,16 @@ from models import Anime, Subscription, User
 class AnimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anime
-        fields = ('id', 'aid', 'name', 'intro', 'is_end', 'episode', 'poster_link', 'updated_time')
+        fields = ('id', 'aid', 'name', 'description', 'is_end', 'episode', 'poster_link', 'updated_time')
+
+
+class SearchSerializer(serializers.Serializer):
+    aid = serializers.IntegerField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    episode = serializers.IntegerField()
+    poster_link = serializers.URLField()
+    updated_time = serializers.DateTimeField()
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

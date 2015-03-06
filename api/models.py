@@ -8,7 +8,7 @@ from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED
 class Anime(models.Model):
     aid = models.TextField(default=0)
     name = models.CharField(max_length=100)
-    intro = models.TextField(blank=True)
+    description = models.TextField(blank=True)
     is_end = models.BooleanField(default=False)
     episode = models.IntegerField(default=0)
     link = models.URLField(blank=True)
