@@ -20,7 +20,7 @@ def parse_season(season_str):
 
 
 def parse_epi(sp_id, season_id=0):
-    #TODO: 有可能会有中文集数，或者第⑨集这样的
+    # TODO: 有可能会有中文集数，或者第⑨集这样的
     match_epi = re.compile('<div class="t">第(\d+)-?(\d+)?集</div>')
     param = str(sp_id) if not season_id else '%d-%d' % (sp_id, season_id)
     bangumi_url = 'http://www.bilibili.tv/sppage/bangumi-%s-1.html' % param
@@ -32,16 +32,20 @@ def parse_epi(sp_id, season_id=0):
 
 def get_real_name(name):
     url = urllib2.urlopen('http://www.bilibili.tv/sp/%s' % name).url
-    return url.split('/')[-1]
+    name = url.split('/')[-1]
+    return name if not name.startswith('search') else None
 
 
 def get_bilibili_anime_detail(name):
     api_url = 'http://api.bilibili.tv/sp?title=%s'
     real_title = get_real_name(name)
+
+    # the anime not exist on the bilibili
+    if not real_title:
+        return {}
+
     sp_data = json.loads(urllib2.urlopen(api_url % real_title).read())
     season, season_id = 0, 0
-    if 'code' in sp_data:
-        return {}
 
     sp_id = sp_data['spid']
     if 'season' in sp_data:
@@ -61,3 +65,7 @@ def get_bilibili_anime_detail(name):
         "bilibili_season": season,
         "bilibili_name": urllib2.unquote(real_title),
     }
+
+
+if __name__ == '__main__':
+    print get_real_name('asdad')
