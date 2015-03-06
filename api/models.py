@@ -5,6 +5,13 @@ from django.contrib.auth.models import User
 from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED
 
 
+class Season(models.Model):
+    season_id = models.IntegerField(default=0)
+    name = models.CharField(max_length=100)
+    cover = models.URLField(blank=True)
+    default = models.BooleanField(default=False)
+
+
 class Anime(models.Model):
     aid = models.TextField(default=0)
     name = models.CharField(max_length=100)
@@ -12,7 +19,7 @@ class Anime(models.Model):
     is_end = models.BooleanField(default=False)
     episode = models.IntegerField(default=0)
     link = models.URLField(blank=True)
-    season = models.IntegerField(default=1)
+    season = models.ForeignKey(Season, related_name='anime')
     poster_link = models.CharField(max_length=300, default='')
     updated_time = models.DateTimeField(default=timezone.now())
     subscription = models.ManyToManyField(User, through='Subscription')
@@ -22,13 +29,6 @@ class Anime(models.Model):
 
     class Meta:
         ordering = ['-updated_time']
-
-
-class Season(models.Model):
-    season_id = models.IntegerField(default=0)
-    name = models.CharField(max_length=100)
-    cover = models.URLField(blank=True)
-    default = models.BooleanField(default=False)
 
 
 class Subscription(models.Model):

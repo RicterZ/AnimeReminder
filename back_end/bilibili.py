@@ -45,17 +45,18 @@ def get_real_name(name):
     return name if not name.startswith('search') else None
 
 
-def get_anime_detail(name):
+def get_anime_detail(name='', aid=0):
     '''获取番剧详情'''
-    api_url = BILI_API_URL + 'sp?title=%s'
-    real_title = get_real_name(name)
-
-    # the anime not exist on the bilibili
-    if not real_title:
+    if not name and not aid:
         return {}
 
+    params = {'spid': aid} if aid else {'title': get_real_name(name)}
 
-    bangumi_data = requests.get(api_url % real_title).json()
+    bangumi_data = requests.get(BILI_API_URL + 'sp', params=params)
+
+    if 'code' in bangumi_data and bangumi_data['code'] == 404:
+        return {}
+
     season = parse_season(bangumi_data['spid'], bangumi_data['season']) if 'season' in bangumi_data else {}
     episode = sum((i['count'] for i in season)) if season else parse_episode(bangumi_data['spid'])
 
@@ -65,10 +66,10 @@ def get_anime_detail(name):
         'season': season,
         'is_end': bangumi_data['isbangumi_end'],
         'name': bangumi_data['title'],
-        'cover': bangumi_data['cover'],
+        'poster_link': bangumi_data['cover'],
         'description': bangumi_data['description'],
-        'link': BILI_URL + 'sp/%s' % real_title,
-        'lastupdate': bangumi_data['lastupdate']
+        'link': BILI_URL + 'sp/%s' % bangumi_data['title'],
+        'updated_time': bangumi_data['lastupdate']
     }
 
 
@@ -86,6 +87,7 @@ def search(name):
 def convert_to_response(result):
     return [{
         'aid': row['spid'],
+        'season_id': row['season_id'],
         'name': row['title'],
         'description': row['description'],
         'episode': row['count'],

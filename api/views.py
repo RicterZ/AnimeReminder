@@ -1,7 +1,7 @@
 from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from models import Anime, Subscription, User
+from models import Anime, Subscription, User, Season
 from exceptions import RegisterException
 from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
 from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
@@ -36,7 +36,15 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         aid = request.DATA.get('anime')
         if not Anime.objects.filter(aid=aid):
-            anime_data = get_anime_detail(aid)
+            anime_data = get_anime_detail(aid=aid)
+            if not anime_data:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            seasons = anime_data['season']
+            for season in seasons:
+                Season.objects.create(**season)
+            del seasons['season']
+
             if anime_data:
                 Anime.objects.create(**anime_data)
         if Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=self.request.DATA['anime'])):

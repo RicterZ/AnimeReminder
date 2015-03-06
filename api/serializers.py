@@ -10,6 +10,7 @@ class AnimeSerializer(serializers.ModelSerializer):
 
 class SearchSerializer(serializers.Serializer):
     aid = serializers.IntegerField()
+    season_id = serializers.IntegerField()
     name = serializers.CharField()
     description = serializers.CharField()
     episode = serializers.IntegerField()
