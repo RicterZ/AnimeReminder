@@ -5,12 +5,6 @@ from django.contrib.auth.models import User
 from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED, BANGUMI_END_STATUS, BANGUMI_NOT_END
 
 
-class Season(models.Model):
-    season_id = models.IntegerField(default=0)
-    name = models.CharField(max_length=100)
-    cover = models.URLField(blank=True)
-    default = models.BooleanField(default=False)
-
 
 class Anime(models.Model):
     aid = models.TextField(default=0)
@@ -19,16 +13,25 @@ class Anime(models.Model):
     is_end = models.IntegerField(choices=BANGUMI_END_STATUS, default=BANGUMI_NOT_END)
     episode = models.IntegerField(default=0)
     link = models.URLField(blank=True)
-    season = models.ForeignKey(Season, related_name='anime', null=True, blank=True)
     poster_link = models.CharField(max_length=300, default='')
     updated_time = models.DateTimeField(default=timezone.now())
-    #subscription = models.ManyToManyField(User, through='Subscription')
 
     def __unicode__(self):
         return self.name
 
     class Meta:
         ordering = ['-updated_time']
+
+
+class Season(models.Model):
+    season_id = models.IntegerField(default=0)
+    name = models.CharField(max_length=100)
+    cover = models.URLField(blank=True)
+    default = models.BooleanField(default=False)
+    anime = models.ForeignKey(Anime, related_name='seasons')
+
+    def __unicode__(self):
+        return u'%s %s' % (self.anime, self.name)
 
 
 class Subscription(models.Model):
@@ -39,5 +42,5 @@ class Subscription(models.Model):
     status = models.IntegerField(default=SUBSCRIPTION_UNWATCHED, choices=SUBSCRIPTION_STATUS)
 
     def __unicode__(self):
-        return self.anime.name
+        return '%s: %s' % (self.user.username, self.anime.name)
 

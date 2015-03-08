@@ -46,4 +46,4 @@ class UserSerializer(serializers.ModelSerializer):
 class SeasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Season
-        fields = ('id', 'name', 'cover', 'default', 'season_id')
+        fields = ('id', 'name', 'cover', 'default', 'season_id', 'anime')
