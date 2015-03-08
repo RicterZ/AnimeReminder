@@ -9,3 +9,10 @@ SUBSCRIPTION_STATUS = (
     (SUBSCRIPTION_WATCHED, 'watched'),
     (SUBSCRIPTION_FORGONE, 'forgone'),
 )
+
+BANGUMI_END = 0
+BANGUMI_NOT_END = 1
+BANGUMI_END_STATUS = (
+    (BANGUMI_END, 'end'),
+    (BANGUMI_NOT_END, 'not end')
+)

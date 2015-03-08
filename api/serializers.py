@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Anime, Subscription, User
+from models import Anime, Subscription, User, Season
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -19,9 +19,14 @@ class SearchSerializer(serializers.Serializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    anime = AnimeSerializer()
     class Meta:
         model = Subscription
-        fields = ('id', 'anime', 'is_read', 'currently_read', 'status', 'user')
+        fields = ('id', 'anime', 'is_read', 'currently_read', 'status')
+
+
+class SubscriptionCreateSerializer(serializers.Serializer):
+    aid = serializers.IntegerField()
 
 
 class SubscriptionUpdateSerializer(serializers.ModelSerializer):
@@ -38,3 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'date_joined', 'is_staff', 'last_login', 'username')
 
 
+class SeasonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Season
+        fields = ('id', 'name', 'cover', 'default', 'season_id')

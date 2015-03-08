@@ -52,7 +52,7 @@ def get_anime_detail(name='', aid=0):
 
     params = {'spid': aid} if aid else {'title': get_real_name(name)}
 
-    bangumi_data = requests.get(BILI_API_URL + 'sp', params=params)
+    bangumi_data = requests.get(BILI_API_URL + 'sp', params=params).json()
 
     if 'code' in bangumi_data and bangumi_data['code'] == 404:
         return {}

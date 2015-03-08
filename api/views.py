@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -5,53 +6,70 @@ from models import Anime, Subscription, User, Season
 from exceptions import RegisterException
 from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
 from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
-    SubscriptionUpdateSerializer, SearchSerializer
+    SubscriptionUpdateSerializer, SearchSerializer, SeasonSerializer, SubscriptionCreateSerializer
 from back_end.bilibili import get_anime_detail, search
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
     queryset = Anime.objects.all()
     serializer_class = AnimeSerializer
-    # for debug
-    #permission_classes = (ReadOnly,)
+    permission_classes = (ReadOnly,)
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
-    serializer_class = SubscriptionSerializer
     permission_classes = (IsOwner, IsAuthenticated,)
 
     def get_serializer_class(self):
-        if self.request.method == 'PUT':
+        if self.request.method in ('PUT', ):
             return SubscriptionUpdateSerializer
-        return SubscriptionSerializer
+        elif self.request.method in ('GET', ):
+            return SubscriptionSerializer
+        return SubscriptionCreateSerializer
 
     def get_queryset(self):
         if self.request.user == AnonymousUser():
             return []
+
         return Subscription.objects.filter(user=self.request.user)
 
     def pre_save(self, obj):
         obj.user = self.request.user
 
     def create(self, request, *args, **kwargs):
-        aid = request.DATA.get('anime')
-        if not Anime.objects.filter(aid=aid):
+        aid = request.DATA.get('aid')
+
+        anime = Anime.objects.filter(aid=aid)
+        if not anime:
+            # Get the anime data from back_end
             anime_data = get_anime_detail(aid=aid)
             if not anime_data:
-                return Response(status=status.HTTP_404_NOT_FOUND)
+                return Response(data={'error': 'Anime not found'}, status=status.HTTP_404_NOT_FOUND)
 
             seasons = anime_data['season']
-            for season in seasons:
-                Season.objects.create(**season)
-            del seasons['season']
 
-            if anime_data:
-                Anime.objects.create(**anime_data)
-        if Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=self.request.DATA['anime'])):
-            return Response(data={"error": "You had already add the anime to your subscriptions."},
+            # Save the `season`
+            for season in seasons:
+                _ = SeasonSerializer(season)
+                if _.is_valid():
+                    _.save()
+            del anime_data['season']
+
+            anime_data['updated_time'] = datetime.fromtimestamp(anime_data['updated_time'])
+            _anime = AnimeSerializer(data=anime_data)
+            if _anime.is_valid():
+                anime = _anime.save()
+            else:
+                return Response(data={'error': _anime._errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            anime = anime[0]
+
+        if Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=anime.id)):
+            return Response(data={'error': 'You had already add the anime to your subscriptions.'},
                             status=status.HTTP_400_BAD_REQUEST)
-        # In fact, there should be checked in the serializer.py, at the `SubscriptionSerializer`'s validate method.
-        return super(SubscriptionViewSet, self).create(request, *args, **kwargs)
+
+        Subscription.objects.create(anime=anime, user=self.request.user)
+
+        return Response(data={'anime': anime.id}, status=status.HTTP_201_CREATED)
 
 
 class SearchViewSet(viewsets.ReadOnlyModelViewSet):
@@ -81,7 +99,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 raise RegisterException('The username had been used.')
             User.objects.create_user(username=serializer.data['username'],
                                               password=serializer.data['password'], email=serializer.data['email'])
-            return Response({"status": "Register a user successfully."}, status=status.HTTP_201_CREATED)
+            return Response({'status': 'Register a user successfully.'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
