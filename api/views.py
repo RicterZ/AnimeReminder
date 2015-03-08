@@ -45,9 +45,6 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             if not anime_data:
                 return Response(data={'error': 'Anime not found'}, status=status.HTTP_404_NOT_FOUND)
 
-            #seasons = anime_data['season']
-            #del anime_data['season']
-
             # convert the timestamp to `datetime` object, then save the object
             anime_data['updated_time'] = datetime.fromtimestamp(anime_data['updated_time'])
             _anime = AnimeSerializer(data=anime_data)
@@ -64,7 +61,6 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
                     _ = SeasonSerializer(data=season)
                     if _.is_valid():
                         _.save()
-
         else:
             anime = anime[0]
 
