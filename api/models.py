@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import UserManager
 from django.contrib.auth.models import User
 from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED, BANGUMI_END_STATUS, BANGUMI_NOT_END
 
