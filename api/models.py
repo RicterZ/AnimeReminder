@@ -38,10 +38,9 @@ class Season(models.Model):
 class Subscription(models.Model):
     user = models.ForeignKey(User, related_name='user')
     anime = models.ForeignKey(Anime, related_name='anime')
-    is_read = models.BooleanField(default=False)
+    season = models.OneToOneField(Season, related_name='season', null=True, blank=True)
     currently_read = models.IntegerField(default=0)
     status = models.IntegerField(default=SUBSCRIPTION_UNWATCHED, choices=SUBSCRIPTION_STATUS)
 
     def __unicode__(self):
         return '%s: %s' % (self.user.username, self.anime.name)
-

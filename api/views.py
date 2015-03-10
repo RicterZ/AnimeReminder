@@ -27,17 +27,14 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         return SubscriptionCreateSerializer
 
     def get_queryset(self):
-        if self.request.user == AnonymousUser():
-            return []
-
         return Subscription.objects.filter(user=self.request.user)
 
     def pre_save(self, obj):
         obj.user = self.request.user
 
+    # override `create` method
     def create(self, request, *args, **kwargs):
         aid = request.DATA.get('id')
-
         anime = Anime.objects.filter(aid=aid)
         if not anime:
             # Get the anime data from back_end
@@ -67,10 +64,27 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         if Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=anime.id)):
             return Response(data={'error': 'You had already add the anime to your subscriptions.'},
                             status=status.HTTP_400_BAD_REQUEST)
-
         Subscription.objects.create(anime=anime, user=self.request.user)
-
         return Response(data={'anime': anime.id}, status=status.HTTP_201_CREATED)
+
+    # override `update` method
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        # check the submitted `count` is valid or not
+        currently_read = int(request.data['currently_read'])
+        if instance.season:
+            if (instance.season.count < currently_read or currently_read < 0):
+                return Response(data={'error': 'The episode count is not valid'})
+        else:
+            if instance.anime.episode < currently_read:
+                return Response(data={'error': 'The episode count is not valid'})
+
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class SearchViewSet(viewsets.ReadOnlyModelViewSet):

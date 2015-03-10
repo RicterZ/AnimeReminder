@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework import validators
 from models import Anime, Subscription, User, Season
 
 
@@ -15,7 +16,6 @@ class AnimeSerializer(serializers.ModelSerializer):
 
 
 class AnimeOfSubscriptionSerializer(serializers.ModelSerializer):
-    seasons = SeasonSerializer(many=True)
     class Meta:
         model = Anime
         fields = ('id', 'aid', 'name', 'description', 'is_end', 'episode', 'poster_link', 'updated_time', 'seasons')
@@ -33,9 +33,10 @@ class SearchSerializer(serializers.Serializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     anime = AnimeOfSubscriptionSerializer()
+
     class Meta:
         model = Subscription
-        fields = ('id', 'anime', 'is_read', 'currently_read', 'status')
+        fields = ('id', 'anime', 'currently_read', 'status', 'season')
 
 
 class SubscriptionCreateSerializer(serializers.Serializer):
@@ -43,9 +44,15 @@ class SubscriptionCreateSerializer(serializers.Serializer):
 
 
 class SubscriptionUpdateSerializer(serializers.ModelSerializer):
+    def get_fields(self):
+        fields = super(SubscriptionUpdateSerializer, self).get_fields()
+        # filter seasons of the anime
+        fields['season'].queryset = Season.objects.filter(anime=self.instance.anime)
+        return fields
+
     class Meta:
         model = Subscription
-        fields = ('id', 'anime', 'is_read', 'currently_read', 'status')
+        fields = ('id', 'anime', 'currently_read', 'status', 'season')
         read_only_fields = ('user', 'anime')
 
 
@@ -54,4 +61,3 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'date_joined', 'is_staff', 'last_login', 'email', 'username')
         read_only_fields = ('id', 'date_joined', 'is_staff', 'last_login', 'username')
-
