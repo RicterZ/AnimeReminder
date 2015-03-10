@@ -74,6 +74,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
+        # TODO: if the anime don't have any season, then?
         # check the submitted `count` is valid or not
         currently_read = int(request.data['currently_read'])
         if instance.season:
