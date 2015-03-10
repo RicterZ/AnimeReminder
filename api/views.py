@@ -36,7 +36,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         obj.user = self.request.user
 
     def create(self, request, *args, **kwargs):
-        aid = request.DATA.get('aid')
+        aid = request.DATA.get('id')
 
         anime = Anime.objects.filter(aid=aid)
         if not anime:
@@ -58,9 +58,9 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             for season in seasons:
                 if not Season.objects.filter(season_id=season['season_id']):
                     season['anime'] = anime.id
-                    _ = SeasonSerializer(data=season)
-                    if _.is_valid():
-                        _.save()
+                    _season = SeasonSerializer(data=season)
+                    if _season.is_valid():
+                        _season.save()
         else:
             anime = anime[0]
 

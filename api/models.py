@@ -29,6 +29,7 @@ class Season(models.Model):
     cover = models.URLField(blank=True)
     default = models.BooleanField(default=False)
     anime = models.ForeignKey(Anime, related_name='seasons')
+    count = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s %s' % (self.anime, self.name)
