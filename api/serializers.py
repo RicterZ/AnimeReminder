@@ -59,14 +59,21 @@ class SubscriptionUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'anime')
 
 
-# Others serializers
+# User serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'date_joined', 'is_staff', 'last_login', 'email', 'username')
-        read_only_fields = ('id', 'date_joined', 'is_staff', 'last_login', 'username')
+        read_only_fields = ('date_joined', 'is_staff', 'last_login', 'username')
 
 
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'password')
+
+
+# Others
 class SearchSerializer(serializers.Serializer):
     aid = serializers.IntegerField()
     season_id = serializers.IntegerField()

@@ -2,10 +2,11 @@ from datetime import datetime
 from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
 from models import Anime, Subscription, User, Season
-from exceptions import RegisterException
-from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated
-from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
+from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated, \
+    IsSelf, SAFE_METHODS
+from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, UserCreateSerializer, \
     SubscriptionUpdateSerializer, SearchSerializer, SeasonSerializer, SubscriptionCreateSerializer
 from back_end.bilibili import get_anime_detail, search
 
@@ -40,7 +41,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             # Get the anime data from back_end
             anime_data = get_anime_detail(aid=aid)
             if not anime_data:
-                return Response(data={'error': 'Anime not found'}, status=status.HTTP_404_NOT_FOUND)
+                raise APIException(detail='Anime not found')
 
             # convert the timestamp to `datetime` object, then save the object
             anime_data['updated_time'] = datetime.fromtimestamp(anime_data['updated_time'])
@@ -62,8 +63,8 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
             anime = anime[0]
 
         if Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=anime.id)):
-            return Response(data={'error': 'You had already add the anime to your subscriptions.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise APIException(detail='You had already add the anime to your subscriptions.')
+
         Subscription.objects.create(anime=anime, user=self.request.user)
         return Response(data={'anime': anime.id}, status=status.HTTP_201_CREATED)
 
@@ -79,10 +80,10 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         currently_read = int(request.data['currently_read'])
         if instance.season:
             if (instance.season.count < currently_read or currently_read < 0):
-                return Response(data={'error': 'The episode count is not valid'})
+                raise APIException(detail='The episode count is not valid')
         else:
             if instance.anime.episode < currently_read:
-                return Response(data={'error': 'The episode count is not valid'})
+                raise APIException(detail='The episode count is not valid')
 
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -101,20 +102,22 @@ class SearchViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsSelf,)
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS + ['PUT', 'PATCH']:
+            return UserSerializer
+        if self.request.method == 'POST':
+            return UserCreateSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer_class()(data=request.DATA)
-        if serializer.is_valid():
-            if User.objects.filter(email__iexact=serializer.data['email']).count() \
-                    and serializer.data['email']:
-                raise RegisterException('The email had been used.')
-            if User.objects.filter(username__iexact=serializer.data['username']):
-                raise RegisterException('The username had been used.')
-            User.objects.create_user(username=serializer.data['username'],
-                                     password=serializer.data['password'], email=serializer.data['email'])
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = UserCreateSerializer(data=request.DATA)
+        if user.is_valid():
+            print user.data
+            if User.objects.filter(email__iexact=user.data['email']):
+                raise APIException(detail='The email had been used.')
+            user.save()
+            return Response(user.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
