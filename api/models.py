@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED, BANGUMI_END_STATUS, BANGUMI_NOT_END
 
 
-
 class Anime(models.Model):
     aid = models.TextField(default=0)
     name = models.CharField(max_length=100)

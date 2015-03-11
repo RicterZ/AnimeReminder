@@ -114,8 +114,7 @@ class UserViewSet(viewsets.ModelViewSet):
             if User.objects.filter(username__iexact=serializer.data['username']):
                 raise RegisterException('The username had been used.')
             User.objects.create_user(username=serializer.data['username'],
-                                              password=serializer.data['password'], email=serializer.data['email'])
-            return Response({'status': 'Register a user successfully.'}, status=status.HTTP_201_CREATED)
+                                     password=serializer.data['password'], email=serializer.data['email'])
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
