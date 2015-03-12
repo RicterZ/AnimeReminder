@@ -3,12 +3,15 @@ from django.db.models import Q
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-from models import Anime, Subscription, User, Season
-from permission import IsOwnerOrReadOnly, ReadOnly, IsOwner, AnonymousUser, IsAuthenticated, \
-    IsSelf, SAFE_METHODS
-from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, UserCreateSerializer, \
-    SubscriptionUpdateSerializer, SearchSerializer, SeasonSerializer, SubscriptionCreateSerializer
+
 from back_end.bilibili import get_anime_detail, search
+
+from models import Anime, Subscription, User, Season, Track
+from permission import ReadOnly, IsOwner, IsAuthenticated, IsSelf
+from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, UserCreateSerializer, \
+    SubscriptionUpdateSerializer, SearchSerializer, SeasonSerializer, SubscriptionCreateSerializer, \
+    UserUpdateSerializer, TrackSerializer
+from constants import SUBSCRIPTION_FORGONE, SUBSCRIPTION_WATCHED, SUBSCRIPTION_UNWATCHED, SUBSCRIPTION_WATCHING
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -21,7 +24,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     permission_classes = (IsOwner, IsAuthenticated,)
 
     def get_serializer_class(self):
-        if self.request.method in ('PUT', ):
+        if self.request.method in ('PUT', 'PATCH', ):
             return SubscriptionUpdateSerializer
         elif self.request.method in ('GET', ):
             return SubscriptionSerializer
@@ -75,6 +78,12 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
+        # `SUBSCRIPTION_FORGONE` status only can be marked when
+        # the `DELETE` method been used
+        if not serializer.data['status'] in (SUBSCRIPTION_UNWATCHED,
+                                             SUBSCRIPTION_WATCHED, SUBSCRIPTION_WATCHING):
+            serializer.data['status'] = SUBSCRIPTION_WATCHING
+
         # TODO: if the anime don't have any season, then?
         # check the submitted `count` is valid or not
         currently_read = int(request.data['currently_read'])
@@ -87,6 +96,12 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 
         self.perform_update(serializer)
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.status = SUBSCRIPTION_FORGONE
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SearchViewSet(viewsets.ReadOnlyModelViewSet):
@@ -106,10 +121,12 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS + ['PUT', 'PATCH']:
-            return UserSerializer
-        if self.request.method == 'POST':
+        if self.request.method in ('POST', ):
             return UserCreateSerializer
+        elif self.request.method in ('PUT', 'PATCH'):
+            return UserUpdateSerializer
+        else:
+            return UserSerializer
 
     def create(self, request, *args, **kwargs):
         user = UserCreateSerializer(data=request.DATA)
@@ -117,7 +134,16 @@ class UserViewSet(viewsets.ModelViewSet):
             print user.data
             if User.objects.filter(email__iexact=user.data['email']):
                 raise APIException(detail='The email had been used.')
-            user.save()
+            User.objects.create_user(**user.data)
             return Response(user.data, status=status.HTTP_201_CREATED)
         else:
             return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TrackViewSet(viewsets.ModelViewSet):
+    permission_classes = (ReadOnly, )
+    serializer_class = TrackSerializer
+
+    def get_queryset(self):
+        print Track.objects.filter(user=self.request.user).annotate(anime='anime')
+        return []

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Anime, Subscription, User, Season
+from models import Anime, Subscription, User, Season, Track
 
 
 # Season serializers
@@ -12,7 +12,7 @@ class SeasonSerializer(serializers.ModelSerializer):
 class SeasonOfSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Season
-        fields = ('name', 'cover', 'default', 'season_id', 'count')
+        fields = ('id', 'name', 'cover', 'default', 'season_id', 'count')
 
 
 # Anime serializers
@@ -73,7 +73,18 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = ('email', 'username', 'password')
 
 
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('password', )
+
+
 # Others
+class TrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track
+
+
 class SearchSerializer(serializers.Serializer):
     aid = serializers.IntegerField()
     season_id = serializers.IntegerField()
