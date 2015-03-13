@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED, BANGUMI_END_STATUS, BANGUMI_NOT_END
+from api.constants import SUBSCRIPTION_STATUS, SUBSCRIPTION_UNWATCHED, BANGUMI_END_STATUS, \
+    BANGUMI_NOT_END
 
 
 class Anime(models.Model):
@@ -37,7 +38,7 @@ class Subscription(models.Model):
     user = models.ForeignKey(User, related_name='user')
     anime = models.ForeignKey(Anime, related_name='anime')
     season = models.ForeignKey(Season, related_name='season', null=True, blank=True)
-    currently_read = models.IntegerField(default=0)
+    currently_watched = models.IntegerField(default=0)
     status = models.IntegerField(default=SUBSCRIPTION_UNWATCHED, choices=SUBSCRIPTION_STATUS)
 
     def __unicode__(self):
@@ -47,4 +48,7 @@ class Subscription(models.Model):
 class Track(models.Model):
     user = models.ForeignKey(User, related_name='track')
     subscription = models.ForeignKey(Subscription, related_name='track')
+    season = models.ForeignKey(Season, related_name='track', null=True)
     date_watched = models.DateTimeField(default=timezone.now())
+    status = models.IntegerField(default=SUBSCRIPTION_UNWATCHED, choices=SUBSCRIPTION_STATUS)
+    message = models.TextField(null=True)

@@ -14,5 +14,7 @@ router.register(r'profile', views.UserViewSet, base_name='profile')
 
 
 urlpatterns = patterns('',
-    url(r'^', include(router.urls)),
-)
+                       url(r'^track/$', views.TrackViewSet.as_view({'get': 'detail'})),
+                       url(r'^track/(.*?)/?$', views.TrackViewSet.as_view({'get': 'detail'})),
+                       url(r'^', include(router.urls)),
+                       )

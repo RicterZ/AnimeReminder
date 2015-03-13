@@ -36,7 +36,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ('id', 'anime', 'currently_read', 'status', 'season')
+        fields = ('id', 'anime', 'currently_watched', 'status', 'season')
 
 
 class SubscriptionCreateSerializer(serializers.Serializer):
@@ -55,7 +55,7 @@ class SubscriptionUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ('id', 'anime', 'currently_read', 'status', 'season')
+        fields = ('id', 'anime', 'currently_watched', 'status', 'season')
         read_only_fields = ('user', 'anime')
 
 
@@ -83,6 +83,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track
+        fields = ('subscription', 'date_watched', 'status', 'message')
 
 
 class SearchSerializer(serializers.Serializer):

@@ -1,5 +1,7 @@
+import copy
 from datetime import datetime
 from django.db.models import Q
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
@@ -7,7 +9,7 @@ from rest_framework.exceptions import APIException
 from back_end.bilibili import get_anime_detail, search
 
 from models import Anime, Subscription, User, Season, Track
-from permission import ReadOnly, IsOwner, IsAuthenticated, IsSelf
+from permission import ReadOnly, IsOwner, IsAuthenticated, IsSelf, AllowAny
 from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, UserCreateSerializer, \
     SubscriptionUpdateSerializer, SearchSerializer, SeasonSerializer, SubscriptionCreateSerializer, \
     UserUpdateSerializer, TrackSerializer
@@ -75,23 +77,24 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
 
         # `SUBSCRIPTION_FORGONE` status only can be marked when
         # the `DELETE` method been used
-        if not serializer.data['status'] in (SUBSCRIPTION_UNWATCHED,
-                                             SUBSCRIPTION_WATCHED, SUBSCRIPTION_WATCHING):
-            serializer.data['status'] = SUBSCRIPTION_WATCHING
+        request_data = dict(copy.deepcopy(request.data))
+        if not status in (SUBSCRIPTION_WATCHED, SUBSCRIPTION_WATCHING):
+            request_data['status'] = SUBSCRIPTION_WATCHING
+
+        serializer = self.get_serializer(instance, data=request_data, partial=partial)
+        serializer.is_valid(raise_exception=True)
 
         # TODO: if the anime don't have any season, then?
         # check the submitted `count` is valid or not
-        currently_read = int(request.data['currently_read'])
+        currently_watched = int(request.data['currently_watched'])
         if instance.season:
-            if (instance.season.count < currently_read or currently_read < 0):
+            if (instance.season.count < currently_watched or currently_watched < 0):
                 raise APIException(detail='The episode count is not valid')
         else:
-            if instance.anime.episode < currently_read:
+            if instance.anime.episode < currently_watched:
                 raise APIException(detail='The episode count is not valid')
 
         self.perform_update(serializer)
@@ -140,10 +143,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TrackViewSet(viewsets.ModelViewSet):
-    permission_classes = (ReadOnly, )
-    serializer_class = TrackSerializer
+class TrackViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny, )
 
-    def get_queryset(self):
-        print Track.objects.filter(user=self.request.user).annotate(anime='anime')
-        return []
+    def detail(self, request, username=None):
+        if not username and not request.user is AnonymousUser:
+            username = self.request.user.username
+
+        track_data = Track.objects.filter(user__username=username)  # .annotate(anime='anime')
+        return Response(TrackSerializer(data=track_data, many=True).data)
