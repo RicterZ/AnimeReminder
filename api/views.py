@@ -144,11 +144,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class TrackViewSet(viewsets.ViewSet):
-    permission_classes = (AllowAny, )
+    permission_classes = (ReadOnly, )
 
     def detail(self, request, username=None):
         if not username and not request.user is AnonymousUser:
             username = self.request.user.username
 
-        track_data = Track.objects.filter(user__username=username)  # .annotate(anime='anime')
-        return Response(TrackSerializer(data=track_data, many=True).data)
+        track_data = TrackSerializer(data=Track.objects.filter(user__username=username),
+                                     many=True).data
+
+        return Response(track_data)
