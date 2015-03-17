@@ -1,4 +1,5 @@
 import copy
+from itertools import groupby
 from datetime import datetime
 from django.db.models import Q
 from django.contrib.auth.models import AnonymousUser
@@ -134,7 +135,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user = UserCreateSerializer(data=request.DATA)
         if user.is_valid():
-            print user.data
             if User.objects.filter(email__iexact=user.data['email']):
                 raise APIException(detail='The email had been used.')
             User.objects.create_user(**user.data)
@@ -153,4 +153,13 @@ class TrackViewSet(viewsets.ViewSet):
         track_data = TrackSerializer(data=Track.objects.filter(user__username=username),
                                      many=True).data
 
-        return Response(track_data)
+        # track data group by subscription
+        _track_data = []
+        for key, value in groupby(track_data, key=lambda d: d['subscription']):
+            anime = AnimeSerializer(Subscription.objects.get(pk=key).anime).data
+            _track_data.append({
+                'anime': anime,
+                'track': [v for v in value],
+            })
+
+        return Response(_track_data)
