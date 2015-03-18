@@ -11,10 +11,12 @@ from back_end.bilibili import get_anime_detail, search
 
 from models import Anime, Subscription, User, Season, Track
 from permission import ReadOnly, IsOwner, IsAuthenticated, IsSelf, AllowAny
-from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, UserCreateSerializer, \
-    SubscriptionUpdateSerializer, SearchSerializer, SeasonSerializer, SubscriptionCreateSerializer, \
-    UserUpdateSerializer, TrackSerializer
-from constants import SUBSCRIPTION_FORGONE, SUBSCRIPTION_WATCHED, SUBSCRIPTION_UNWATCHED, SUBSCRIPTION_WATCHING
+from serializers import AnimeSerializer, SubscriptionSerializer, UserSerializer, \
+    UserCreateSerializer, SubscriptionUpdateSerializer, SearchSerializer, \
+    SeasonSerializer, SubscriptionCreateSerializer, UserUpdateSerializer, \
+    TrackSerializer, UserProfileSerializer
+from constants import SUBSCRIPTION_FORGONE, SUBSCRIPTION_WATCHED, \
+    SUBSCRIPTION_UNWATCHED, SUBSCRIPTION_WATCHING
 
 
 class AnimeViewSet(viewsets.ModelViewSet):
@@ -130,7 +132,14 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.request.method in ('PUT', 'PATCH'):
             return UserUpdateSerializer
         else:
-            return UserSerializer
+            return UserProfileSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer_class = UserSerializer if instance == request.user \
+            else UserProfileSerializer
+        serializer = serializer_class(instance)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         user = UserCreateSerializer(data=request.DATA)
@@ -144,10 +153,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class TrackViewSet(viewsets.ViewSet):
-    permission_classes = (ReadOnly, )
+    permission_classes = (IsAuthenticated, )
 
     def detail(self, request, username=None):
-        if not username and not request.user is AnonymousUser:
+        if not username and not request.force_user is AnonymousUser:
             username = self.request.user.username
 
         track_data = TrackSerializer(data=Track.objects.filter(user__username=username),
