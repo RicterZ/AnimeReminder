@@ -59,6 +59,13 @@ class SubscriptionUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'anime')
 
 
+# Track Serializer
+class TrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track
+        fields = ('subscription', 'date_watched', 'status', 'message')
+
+
 # User serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -68,9 +75,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    track = TrackSerializer(many=True)
+
     class Meta:
         model = User
-        fields = ('id', 'date_joined', 'is_staff', 'last_login', 'username')
+        fields = ('id', 'date_joined', 'is_staff', 'last_login', 'username', 'track')
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -86,12 +95,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 
 # Others
-class TrackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Track
-        fields = ('subscription', 'date_watched', 'status', 'message')
-
-
 class SearchSerializer(serializers.Serializer):
     aid = serializers.IntegerField()
     season_id = serializers.IntegerField()

@@ -150,25 +150,3 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(user.data, status=status.HTTP_201_CREATED)
         else:
             return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class TrackViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated, )
-
-    def detail(self, request, username=None):
-        if not username and not request.force_user is AnonymousUser:
-            username = self.request.user.username
-
-        track_data = TrackSerializer(data=Track.objects.filter(user__username=username),
-                                     many=True).data
-
-        # track data group by subscription
-        _track_data = []
-        for key, value in groupby(track_data, key=lambda d: d['subscription']):
-            anime = AnimeSerializer(Subscription.objects.get(pk=key).anime).data
-            _track_data.append({
-                'anime': anime,
-                'track': [v for v in value],
-            })
-
-        return Response(_track_data)
