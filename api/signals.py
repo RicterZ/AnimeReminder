@@ -9,10 +9,13 @@ def update_subscription_signal(sender, **kwargs):
     if instance.status == SUBSCRIPTION_FORGONE:
         message = TRACK_FORGONE
     elif instance.status == SUBSCRIPTION_WATCHING:
+        if instance.currently_watched == instance.currently_watched:
+            return
         message = instance.currently_watched
     elif instance.status == SUBSCRIPTION_WATCHED:
         message = TRACK_WATCHED
     else:
+        # fallback
         instance.status = SUBSCRIPTION_WATCHING
         message = instance.currently_watched
 
@@ -20,6 +23,6 @@ def update_subscription_signal(sender, **kwargs):
         instance.status = SUBSCRIPTION_UNWATCHED
         message = TRACK_ADD
 
-    Track.objects.create(user=instance.user, subscription=instance, season=instance.season,
-                         date_watched=timezone.now(), status=instance.status,
-                         message=message)
+    Track.objects.create(user=instance.user, subscription=instance,
+                         season=instance.season, date_watched=timezone.now(),
+                         status=instance.status, message=message)
