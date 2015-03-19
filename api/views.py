@@ -71,10 +71,18 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         else:
             anime = anime[0]
 
-        if Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=anime.id)):
-            raise APIException(detail='You had already add the anime to your subscriptions.')
+        instance = Subscription.objects.filter(Q(user=self.request.user) & Q(anime_id=anime.id))
 
-        Subscription.objects.create(anime=anime, user=self.request.user)
+        if not instance:
+            Subscription.objects.create(anime=anime, user=self.request.user)
+        else:
+            instance = instance.first()
+            if not instance.status == SUBSCRIPTION_FORGONE:
+                raise APIException(detail='You had already add the anime to your subscriptions.')
+            instance.status = SUBSCRIPTION_WATCHING
+            instance.currently_watched = 0
+            instance.save()
+
         return Response(data={'anime': anime.id}, status=status.HTTP_201_CREATED)
 
     # override `update` method
