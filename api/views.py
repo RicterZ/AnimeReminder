@@ -36,7 +36,8 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         return SubscriptionCreateSerializer
 
     def get_queryset(self):
-        return Subscription.objects.filter(user=self.request.user)
+        return Subscription.objects.filter(~Q(status=SUBSCRIPTION_FORGONE) &
+                                           Q(user=self.request.user))
 
     def pre_save(self, obj):
         obj.user = self.request.user
@@ -81,6 +82,8 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
+        if instance.status == SUBSCRIPTION_FORGONE:
+            raise APIException(detail='Detail not found')
         # `SUBSCRIPTION_FORGONE` status only can be marked when
         # the `DELETE` method been used
         request_data = dict(copy.deepcopy(request.data))
